@@ -1,0 +1,76 @@
+@charset "utf-8";
+
+.controlIcon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0 6px;
+    cursor: pointer;
+}
+
+.userinfoBox {
+    overflow: auto;
+    background-color: #ddd;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+.topRow {
+    height: 60px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.topRowLeft {
+    float: left;
+}
+
+.headimgBox {
+    width: 60px;
+    height: 60px;
+    background-color: #bbb;
+    border-radius: 50%;
+}
+
+.topRowRight {
+    width: auto;
+    float: left;
+    line-height: 30px;
+    margin-left: 20px;
+}
+
+.bottomRow {
+    font-size: 12px;
+}
+
+.userinfoRow {
+    margin: 5px;
+    overflow: auto;
+    line-height: 26px;
+}
+
+.infoRowLeft {
+    width: 48%;
+    float: left;
+    margin-right: 2%;
+}
+
+.noEnter {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.userLevel {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    background-color: #8AA3B9;
+    border-radius: 50%;
+    color: #ddd;
+    margin-left: 15px;
+}

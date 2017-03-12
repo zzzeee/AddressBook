@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>添加新员工</title>
+
+<link rel="stylesheet" type="text/css" href="/src/css/public/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="/src/css/public/bootstrap-table.css" />
+<link rel="stylesheet" type="text/css" href="/src/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="/src/css/public/bootstrap-datetimepicker.css" />
+<link rel="stylesheet" type="text/css" href="/src/css/common.css" />
+<link rel="stylesheet" type="text/css" href="/src/css/userAdd.css" />
+<script type="text/javascript" src="/src/js/public/jquery.js"></script>
+<script type="text/javascript" src="/src/js/public/bootstrap.js"></script>
+<script type="text/javascript" src="/src/js/public/bootstrap-table.js"></script>
+<script type="text/javascript" src="/src/js/public/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="/src/js/public/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="/src/js/util.js"></script>
+<script type="text/javascript" src="/src/js/userAdd.js"></script>
+
+</head>
+ 
+<body>
+
+<div id="Nav">
+	<div class="menuList">
+		<div>
+			<a href="/department_list">部门管理</a>
+		</div>
+		<div class="active">
+			<a href="/user_list">员工管理</a>
+		</div>
+		<div>
+			<a href="/notice_list">公告管理</a>
+		</div>
+	</div>
+</div>
+
+<div id="Content">
+<h3 class="bodyTitle"></h3>
+
+<div class="contentBox">
+<form class="form-horizontal" action="/saveUserInfo" method="POST" onsubmit="return cheackFrom();">
+	<input type="hidden" id='type' name='type' value="add" />
+	<input type="hidden" id='u_id' name='uid' value="" />
+	<div class="form-group">
+		<label class="col-sm-2 control-label">姓名 ：</label>
+		<div class="col-sm-10">
+	  		<input type="text" class="form-control realName" name="realName" maxlength="10" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">用户名 ：</label>
+		<div class="col-sm-10" id="userNameBox">
+	  		<input type="text" class="form-control userName" name="userName" maxlength="30" />
+	  		<p class="help-block">请统一用员工姓名的拼音当用户名(不能重复)。</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">APP权限 ：</label>
+		<div class="col-sm-10">
+	  		<label>
+		      <input type="checkbox" class="inputIsAddUser" name="IsAddUser" value="1" /> 添加员工
+		    </label>
+		    <label>
+		      <input type="checkbox" class="inputIsSendNotice" name="IsSendNotice" value="1" /> 发布公告
+		    </label>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">密码 ：</label>
+		<div class="col-sm-10">
+	  		<p style="margin-top: 8px;">默认为： 123456, 新建后建议员工在APP内自行修改。</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">部门 ：</label>
+		<div class="col-sm-10">
+	  		<select class="form-control userDepartment" name="userDepartment">
+	  			<option value="0">请选择</option>
+	  		</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">职位 ：</label>
+		<div class="col-sm-10">
+	  		<input type="text" class="form-control userPosition" name="userPosition" maxlength="20" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">岗位等级 ：</label>
+		<div class="col-sm-10">
+	  		<select class="form-control userLevel" name="userLevel">
+	  		</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">手机 ：</label>
+		<div class="col-sm-10">
+	  		<input type="tel" class="form-control userMobile" name="userMobile" maxlength="11" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">邮箱 ：</label>
+		<div class="col-sm-10">
+	  		<input type="mail" class="form-control userEmail" name="userEmail" maxlength="30"  />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">地址 ：</label>
+		<div class="col-sm-10">
+	  		<input type="text" class="form-control userAddress" name="userAddress" maxlength="60" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="inputPassword3" class="col-sm-2 control-label">生日 ：</label>
+		<div class="col-sm-10">
+	  		<div class="control-group control-date-box">
+				<div class="controls input-append date form_date" data-date="" data-date-format="yyyy-m-d" data-link-field="dtp_input1">
+					<input size="16" type="text" class='dtp_input1' value="" readonly placeholder="" />
+					<span class="add-on"><i class="icon-remove"></i></span>
+	    			<span class="add-on"><i class="icon-th"></i></span>
+				</div>
+				<input type="hidden" name="userBirthday" id="dtp_input1" value="" /><br/>
+			</div>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="inputPassword3" class="col-sm-2 control-label">入职时间 ：</label>
+		<div class="col-sm-10">
+	  		<div class="control-group control-date-box">
+				<div class="controls input-append date form_date" data-date="" data-date-format="yyyy-m-d" data-link-field="dtp_input2">
+					<input size="16" type="text" class='dtp_input2' value="" readonly placeholder="" />
+					<span class="add-on"><i class="icon-remove"></i></span>
+	    			<span class="add-on"><i class="icon-th"></i></span>
+				</div>
+				<input type="hidden" name="userEntryTime" id="dtp_input2" value="" /><br/>
+			</div>
+		</div>
+	</div>
+
+	<div class="submitBox">
+		<button type="submit" class="btn btn-primary btn-lg">提 交</button>
+	</div>
+</form>
+</div>
+</div>
+
+</body> 
+</html>

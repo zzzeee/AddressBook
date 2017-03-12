@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>文档标题</title>
+
+<link rel="stylesheet" type="text/css" href="src/css/public/bootstrap.css" />
+<script type="text/javascript" src="/src/js/public/jquery.js"></script>
+<script type="text/javascript" src="/src/js/public/bootstrap.js"></script>
+
+</head>
+ 
+<body>
+
+<form class="form-inline" action="/search_user_info" method="GET">
+	<div class="form-group">
+		<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+		<div class="input-group">
+	  		<div class="input-group-addon">用户名：</div>
+	  			<input type="text" class="form-control" name="username" id="exampleInputAmount" placeholder="Amount" />
+	 		<div class="input-group-addon">(会员)</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary">搜索</button>
+</form>
+
+<script type="text/javascript">
+	var name = $('#exampleInputAmount').val() || '';
+
+	if(name != '')
+	{
+		$.getJSON('http://localhost:3000/search_user_info', {
+			username : name,
+		}, function(result){
+			console.log(result);
+		});
+	}
+</script>
+
+</body> 
+</html>

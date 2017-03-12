@@ -1,0 +1,74 @@
+@charset "utf-8";
+
+.logoimg {
+	width: 100px;
+	height: 100px;
+	margin: 50px auto;
+	background-image: url("/src/imgs/jtlogofff.png");
+	background-size: 100% 100%;
+}
+
+.loginBox {
+	width: 400px;
+	border-radius: 5px;
+	margin: 0 auto;
+	padding: 50px 0; 
+	background : rgba( 255, 255, 255, 0.65);
+	box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.1);
+	background: rgba(255, 255, 255, 0.65);
+}
+
+.logintext {
+	width: 100%;
+	margin-bottom: 30px;
+	text-align: center;
+	font-size: 18px;
+}
+
+.usernameBox, .passwordBox {
+	width: 80%;
+	margin: 0 auto 50px;
+}
+
+.forget-pwd {
+	width: 80%;
+	text-align: right;
+	margin: 0 auto 10px;
+	cursor: pointer;
+}
+.forget-pwd > span
+{
+	color: #666;
+}
+.forget-pwd > span:hover
+{
+	color:#333;
+}
+
+.remember-me
+{
+	width: 80%;
+	margin: 0 auto 20px;
+	color:#333;
+}
+
+.updateBox
+{
+	width: 80%;
+	text-align: center;
+	margin: 0 auto;
+}
+
+.btn-update
+{
+	width: 100px;
+	height: 36px;
+	text-align: center;
+	color:#fff;
+	background-color: #33588e;
+}
+.btn-update:hover
+{
+	color:#fff;
+	background-color: #2b4397;
+}
