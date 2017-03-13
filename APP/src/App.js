@@ -56,7 +56,6 @@ export default class APP extends Component {
 
         this.showLoadPage = this.showLoadPage.bind(this);
         this.showContentPage = this.showContentPage.bind(this);
-        this.linkUserList = this.linkUserList.bind(this);
     }
 
     componentDidMount() {
@@ -178,13 +177,6 @@ export default class APP extends Component {
         });
     };
 
-    //用户列表
-    linkUserList = (obj) => {
-        this.query = obj;
-        this.selectPage = 'users';
-        this.refs.tabView1.goToPage(0);
-    };
-
     //显示正文
     showContentPage = () => {
         switch(this.state.selectIndex){
@@ -205,10 +197,9 @@ export default class APP extends Component {
             case 3 :
                 return <About 
                     title={this.returnTitle()} 
-                    pageId={this.returnPage()} 
+                    pageId={this.returnPage()}
                     _id={this.return_id()} 
                     logout={this.userLogout}
-                    linkUserList={this.linkUserList}
                 />;
                 break;
             default : 

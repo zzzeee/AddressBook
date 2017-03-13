@@ -6,15 +6,14 @@ import {
 	TouchableHighlight,
 	ListView,
 	TextInput,
+	Linking,
 } from 'react-native';
 
-import Button from '../public/Button';
 import TopTitle from '../public/TopTitle';
 import InputText from '../public/InputText';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
-var colorList = ['#0379fb', '#fcd333', '#e7463e', '#57b648', '#ed6fbb', '#e38830'];
 
 export default class DepUsers extends Component {
 
@@ -31,23 +30,18 @@ export default class DepUsers extends Component {
   	}
 
   	componentDidMount() {
-        let obj = {
-            search : JSON.stringify(this.props.route.search),
-            sort : 'UserName',
-            order : 'ASC',
-        };
-  		this.queryUserList(obj);
+  		this.queryUserList(this.props.obj);
   	}
 
-	//部门员工列表
+	//员工列表
 	render() {
         let {route, nav} = this.props;
 		return (
-			<View style={styles.flex}>
+			<View style={styles.body}>
 				<View>
-					<TopTitle  title={route.title} showReturn={true} 
+					<TopTitle title={route.title} showReturn={true} 
 						onPress={() => {
-							nav.push({title:'首页', id:'main'});
+							this.props.return();
 						}}
 					/>
 				</View>
@@ -153,6 +147,10 @@ export default class DepUsers extends Component {
 }
 
 const styles = StyleSheet.create({
+	body : {
+		flex : 1,
+		backgroundColor : '#fff'
+	},
 	flex : {
 		flex : 1,
 	},

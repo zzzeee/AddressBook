@@ -30,7 +30,8 @@ var colorList = ['#0379fb', '#fcc433', '#e7463e', '#57b648', '#ed6fbb', '#e38830
  * 还有个问题是，刚进入本页的第一次点击无效
  *	猜测原因：本页默认给搜索框获得焦点，所以第一次点击让搜索框失去焦点
  *
- * 楼上的傻逼你不会直接测试一下啊，经测试跟你猜的一样
+ * 楼上的傻逼你不会直接测试一下啊   
+ * <<<< 回复：经测试跟你猜的一样
  *========================================================================
  */
 
@@ -98,10 +99,20 @@ export default class Home extends Component {
 				return (this.initPage(navigator));
 				break;
 			case 'users' :
-				if(this.props.query) {
-					route.search = this.props.query;
+				route.search = this.props.query ? this.props.query : route.search;
+
+				if(route.search){
+					let obj = {
+						search : JSON.stringify(route.search),
+						sort : 'UserName',
+						order : 'ASC',
+					};
+					return <UserList route={route} nav={navigator} return={()=>{
+						navigator.push({title: '首页', id: 'main'});
+					}} viewUser={this.props.viewUser} obj={obj} />;
+				}else{
+					return null;
 				}
-				return <UserList route={route} nav={navigator} viewUser={this.props.viewUser} />;
 				break;
 			default : 
 				return false;
@@ -197,6 +208,7 @@ const styles = StyleSheet.create({
 		backgroundColor : '#fff',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
+		padding : 10,
 	},
 	depItem : {
 		height: (Util.size.width - 100) / 4,

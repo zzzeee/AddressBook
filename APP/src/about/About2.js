@@ -20,7 +20,6 @@ import TopTitle from '../public/TopTitle';
 import EditUser from './EditUser';
 import NoticeDetails from '../notice/NoticeDetails';
 import UserList from '../home/UserList';
-import AboutTop from './AboutTop';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
@@ -34,20 +33,31 @@ export default class About extends Component {
       		userInfoLocal : null,
             userInfoQuery: null,
             datas : null,
+            user_id : null,
             dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       	};
        
-        this.user_id = null;
+        this.update = false;
         this._navigator = {};
+        this.searchObj = null;
   	}
 
     componentDidMount() {
         //alert('componentDidMount');
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.update && this.state.userInfoQuery && this.state.userInfoQuery._id != nextState.user_id)
+        {
+            this.update = false;
+            this.initData(nextState.user_id);
+        }
+
+        return true;
+    }
+
     componentWillMount() {
-        this.user_id = this.props._id;
-        this.initData(this.user_id);
+        this.initData(this.props._id);
     }
 
     initData = (uid) => {
@@ -71,6 +81,7 @@ export default class About extends Component {
                                     var ret = result3 || [];
                                     that.setState({
                                         datas : ret,
+                                        user_id : uid,
                                         userInfoQuery : result2.uinfo,
                                         userInfoLocal : JSON.parse(result),
                                         dataSource: that.state.dataSource.cloneWithRows(ret)
@@ -109,32 +120,29 @@ export default class About extends Component {
                 return <EditUser nav={navigator} route={route} uid={route.uid} />;
                 break;
             case 'users' :
-				return <UserList 
-                        route={route} 
-                        nav={navigator} 
-                        obj={{
-                            search : JSON.stringify(route.search),
-                            sort : 'UserName',
-                            order : 'ASC',
-                        }}
-                        return={()=>{
-                            this.user_id = this.state.userInfoLocal._id;
+				return <UserList route={route} nav={navigator} viewSelf={()=>{
+                        this.update = true;
+                        this.setState({
+                            user_id : this.state.userInfoLocal._id,
+                        }, () => {
                             navigator.push({
                                 id : 'main',
                                 title : '个人中心',
                             });
-                        }} 
-                        viewUser={(id)=>{
-                            this.user_id = id;
+                        });
+                    }} viewUser={(id)=>{
+                        this.update = true;
+                        this.setState({
+                            user_id : id
+                        }, () => {
                             navigator.push({
                                 id : 'main',
                                 title : route.nextTitle,
                                 returnId : 'users',
-                                returnTitle : route.title,
-                                search : route.search,
+                                returnTitle : route.title
                             });
-                        }} 
-                    />;
+                        });
+                    }} obj={this.searchObj} />;
 				break;
             default : 
                 return false;
@@ -156,7 +164,6 @@ export default class About extends Component {
                             returnId : 'main',
                             returnTitle : '个人中心',
                             nextTitle : route.title,
-                            search : route.search,
                         });
                     }
                 }} />
@@ -166,15 +173,7 @@ export default class About extends Component {
                             dataSource={this.state.dataSource} 
                             renderRow={this.renderNotice.bind(this)}
                             enableEmptySections={true}  //允许空数据
-                            renderHeader={() => {
-                                return <AboutTop 
-                                    nav={navigator} 
-                                    route={route} 
-                                    uid={this.user_id} 
-                                    userinfo={this.state.userInfoLocal} 
-                                    noticeNum={this.state.datas.length} 
-                                />;
-                            }}
+                            renderHeader={() => this.initPageTop()}
                         />:
                         <View style={styles.flex}>
                             {this.initPageTop()}
@@ -186,6 +185,189 @@ export default class About extends Component {
                 </View>
             </View>
         );
+    };
+
+    //加载公告列表
+	getNoticeList = (txt) => {
+		let that = this;
+		let url = Config.host + Config.notices;
+
+		Util.fetch(url, 'get', {
+			text : txt
+        }, function(result){
+        	var ret = result || [];
+            that.setState({
+            	datas : ret,
+            	dataSource: that.state.dataSource.cloneWithRows(ret)
+            });
+        });
+	};
+
+    //个人中心的头部
+    initPageTop = () => {
+        if(!this.state.userInfoLocal || !this.state.userInfoQuery) return null;
+        let isSelf = this.state.user_id == this.state.userInfoLocal._id ? true : false;
+        let userinfo = this.state.userInfoQuery;
+        let img = userinfo.HeadImg ? {uri: Config.host + '/images/' + userinfo.HeadImg} : require('../../images/head.jpeg');
+
+        return (
+            <View style={styles.topView}>
+                {/*
+                    Image组件的 resizeMode属性说明
+                    cover:等比拉伸
+                    strech:保持原有大小 
+                    contain:图片拉伸  充满空间
+                */}
+                <Image
+                    source={require('../../images/userBG.jpg')} 
+                    resizeMode={Image.resizeMode.strech}
+                    style={styles.topImgView}
+                >
+                <TouchableHighlight onPress={()=>this.linkViewEditInfo(isSelf)}>
+                    <View style={styles.nameView}>
+                        <Text style={styles.nameText}>
+                            {userinfo.Department + ' ● ' + userinfo.Name}
+                        </Text>
+                        <Icon name={isSelf ? 'edit' : 'search'} size={16} color='#eee' backgroundColor='rgba(0, 0, 0, 0.2)' />
+                    </View>
+                </TouchableHighlight>
+                </Image>
+                {isSelf ?
+                    <View style={styles.btnBoxView}>
+                        <Button 
+                            text={userinfo.Concerns.length + " 关注"}
+                            style={styles.button} 
+                            textStyle={styles.buttonText}
+                            onPress={() => {
+                                this.searchObj = {
+                                    search : JSON.stringify({_id : {'$in' : userinfo.Concerns}}),
+                                    sort : 'UserName',
+                                    order : 'ASC',
+                                };
+                                this._navigator.push({
+                                    id : 'users',
+                                    title : '关注列表',
+                                    returnId : 'main',
+                                    returnTitle : '个人中心',
+                                    nextTitle : '查看该关注者信息',
+                                });
+                            }}
+                         />
+                        <Button 
+                            text={userinfo.Fans.length + " 粉丝"} 
+                            style={styles.button} 
+                            textStyle={styles.buttonText}
+                            onPress={() => {
+                                this.searchObj = {
+                                    search : JSON.stringify({_id : {'$in' : userinfo.Fans}}),
+                                    sort : 'UserName',
+                                    order : 'ASC',
+                                };
+                                this._navigator.push({
+                                    id : 'users',
+                                    title : '粉丝列表',
+                                    returnId : 'main',
+                                    returnTitle : '个人中心',
+                                    nextTitle : '查看该粉丝信息',
+                                });
+                            }}
+                        />
+                    </View> :
+                    <View style={styles.btnBoxView}>
+                        <Button text="打电话" style={styles.button} textStyle={styles.buttonText} onPress={()=>{
+                            Linking.openURL('tel: ' + userinfo.Mobile).catch(err => console.error('Tel error!', err));
+                        }} />
+                        <Button text="发邮件" style={styles.button} textStyle={styles.buttonText} onPress={()=>{
+                            Linking.openURL('mailto: ' + userinfo.Email).catch(err => console.error('Mailto error!', err));
+                        }} />
+                        <Button 
+                            text={this.isFollow() ? '取消关注' : '加关注'} 
+                            onPress={this.followToggle} 
+                            style={styles.button} 
+                            textStyle={styles.buttonText} 
+                        />
+                    </View>
+                }
+                <TouchableHighlight style={styles.headBox} onPress={()=>this.linkViewEditInfo(isSelf)}>
+                    <Image
+                        source={img}
+                        style={styles.headView}
+                    />
+                </TouchableHighlight>
+                <View style={styles.explainView}>
+                    <ScrollView>
+                        <Text style={styles.explainText}>
+                            {userinfo.Explain ? userinfo.Explain : '暂无简介'}
+                        </Text>
+                    </ScrollView>
+                </View>
+                <View style={styles.noticeNum}>
+                    <Text style={styles.noticeNumText}>{'已发公告 (' + this.state.datas.length + ')'}</Text>
+                </View>
+            </View>
+        );
+    };
+
+    // 跳转到查看编辑用户信息页面
+    linkViewEditInfo = (isSelf) => {
+        this._navigator.push({
+            title : isSelf ? '修改资料' : '查看资料', 
+            id : 'editUser',
+            returnId : 'main',
+            uid : this.state.user_id,
+        });
+    };
+
+    //判断是否关注
+    isFollow = () => {
+        let _isFollow = false;
+        
+        for(let u of this.state.userInfoQuery.Fans)
+        {
+            if(u == this.state.userInfoLocal._id)
+            {
+                _isFollow = true;
+                break;
+            }
+        }
+
+        return _isFollow;
+    };
+
+    //更新关注 已关注->取消， 未关注->关注
+    followToggle = () => {
+        let _uid = this.state.userInfoLocal._id || null;
+        let _fid = this.state.user_id || null;
+        //alert(_uid + '--' + _fid);
+        if(_fid && _uid && _fid != _uid)
+        {
+            let that = this;
+            let url = Config.host + Config.followToggle;
+           
+            Util.fetch(url, 'get', {
+                isFollow : this.isFollow() ? 1 : 0,
+                uid : _uid,
+                fid : _fid,
+            }, function(result){
+                if(result && result.msg)
+                {
+                    //alert(result.msg);
+                    // Add a Toast on screen.
+                    let toast = Toast.show(result.msg, {
+                        duration: Toast.durations.LONG,
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    });
+
+                    if(result && result.uinfo && result.err === 0)
+                    {
+                        that.setState({
+                            userInfoQuery : result.uinfo
+                        });
+                    }
+                }
+            });
+        }
     };
 
     //单条公告
