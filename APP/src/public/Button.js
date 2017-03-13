@@ -18,7 +18,7 @@ export default class Button extends Component {
 	render() {
 		let {text, onPress, style, textStyle, children} = this.props;
 	    return (
-	    	<TouchableHighlight onPress={onPress}>
+	    	<TouchableHighlight underlayColor='transparent' onPress={onPress}>
 	    		<View style={[styles.btnBox, style]}>
 					<Text  numberOfLines={1} style={[styles.btnText, textStyle]}>{text}</Text>
 					{children && children}

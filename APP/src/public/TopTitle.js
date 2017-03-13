@@ -26,8 +26,8 @@ export default class TopTitle extends Component {
 	    	<View style={styles.topBox}>
 	    		<View style={styles.sideBox}>
 	    			{this.props.showReturn ?
-	    				<TouchableHighlight style={styles.btn} onPress={onPress}>
-		    				<Icon name="ios-arrow-dropleft-outline" size={24} color="#eee" />
+	    				<TouchableHighlight underlayColor='transparent' style={styles.btn} onPress={onPress}>
+		    				<Icon name="ios-arrow-dropleft-outline" size={26} color="#eee" />
 		    			</TouchableHighlight>
 		    			: null
 	    			}

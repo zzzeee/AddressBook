@@ -85,7 +85,7 @@ export default class About extends Component {
                     resizeMode={Image.resizeMode.strech}
                     style={styles.topImgView}
                 >
-                <TouchableHighlight onPress={()=>this.linkViewEditInfo(isSelf)}>
+                <TouchableHighlight underlayColor='transparent' onPress={()=>this.linkViewEditInfo(isSelf)}>
                     <View style={styles.nameView}>
                         <Text style={styles.nameText}>
                             {userinfo.Department + ' ● ' + userinfo.Name}
@@ -142,7 +142,11 @@ export default class About extends Component {
                         />
                     </View>
                 }
-                <TouchableHighlight style={styles.headBox} onPress={()=>this.linkViewEditInfo(isSelf)}>
+                <TouchableHighlight 
+                    underlayColor='transparent' 
+                    style={styles.headBox} 
+                    onPress={()=>this.linkViewEditInfo(isSelf)}
+                >
                     <Image
                         source={img}
                         style={styles.headView}

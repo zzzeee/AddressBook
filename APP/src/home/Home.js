@@ -156,6 +156,8 @@ export default class Home extends Component {
 		return (
 			<TouchableHighlight 
 				key={i}
+				activeOpacity={1}
+				underlayColor='transparent'
 				onPress={()=> {
 					navigator.push({
 						title: obj.Name, 

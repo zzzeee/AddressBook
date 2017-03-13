@@ -3,7 +3,6 @@ import {
 	StyleSheet,
 	Text, 
 	View, 
-	TouchableHighlight,
 	Alert,
 	ScrollView,
 	Switch,

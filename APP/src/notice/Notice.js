@@ -119,6 +119,7 @@ export default class About extends Component {
 		return (
 			<TouchableHighlight 
 				key={rowID}
+				underlayColor='transparent'
 				onPress={()=> {
 					this._navigator.push({
 						title: '公告详情', 

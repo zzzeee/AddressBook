@@ -193,6 +193,7 @@ export default class About extends Component {
 		return (
 			<TouchableHighlight 
 				key={rowID}
+                underlayColor='transparent'
 				onPress={()=> {
 					this._navigator.push({
 						title: '公告详情', 
@@ -233,7 +234,6 @@ const styles = StyleSheet.create({
 	bodyBox : {
         flex : 1,
         backgroundColor : '#eee',
-        marginBottom : 30,
     },
     loadTxt : {
         letterSpacing : 5,

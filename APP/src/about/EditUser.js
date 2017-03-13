@@ -100,7 +100,7 @@ export default class EditUser extends Component {
 					nav.push({id : route.returnId});
 				}} />
 				<ScrollView contentContainerStyle={styles.bodyBox}>
-					<TouchableHighlight onPress={()=>{
+					<TouchableHighlight underlayColor='transparent' onPress={()=>{
 						if(!disEdit)
 						{
 							this.selectLocalImage();

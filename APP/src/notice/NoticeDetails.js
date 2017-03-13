@@ -44,7 +44,7 @@ export default class NoticeDetails extends Component {
 						</View>
 						<View style={styles.contentLastRow}>
 							{viewUser ?
-								<TouchableHighlight onPress={()=>{
+								<TouchableHighlight underlayColor='transparent' onPress={()=>{
 									if(route.notice.UserId){
 										viewUser(route.notice.UserId);
 									}

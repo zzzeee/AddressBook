@@ -94,7 +94,7 @@ export default class DepUsers extends Component {
 					<Text style={styles.userFristText}>{obj.Name.substring(0, 1)}</Text>
 				</View>
 				<View style={styles.userNameView}>
-					<TouchableHighlight style={styles.flex} onPress={()=>{
+					<TouchableHighlight underlayColor='transparent' style={styles.flex} onPress={()=>{
 						if(obj._id){
 							this.props.viewUser(obj._id);
 						}
@@ -103,7 +103,7 @@ export default class DepUsers extends Component {
 					</TouchableHighlight>
 				</View>
 				<View style={styles.userMobileView}>
-					<TouchableHighlight onPress={()=>{
+					<TouchableHighlight underlayColor='transparent' onPress={()=>{
 						Linking.openURL('tel: ' + obj.Mobile).catch(err => console.error('An error occurred', err));
 					}}>
 						<Text style={[styles.userMobileText, {paddingLeft:12}]}>
@@ -111,7 +111,7 @@ export default class DepUsers extends Component {
 							<Text>{obj.Mobile}</Text>
 						</Text>
 					</TouchableHighlight>
-					<TouchableHighlight onPress={()=>{
+					<TouchableHighlight underlayColor='transparent' onPress={()=>{
 						Linking.openURL('mailto: ' + obj.Email).catch(err => console.error('An error occurred', err));
 					}}>
 						<Text style={styles.userMobileText}>
