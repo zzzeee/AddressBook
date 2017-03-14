@@ -7,20 +7,23 @@ import {
 	Alert,
 	ScrollView,
 	Switch,
-	AsyncStorage,
 	Image,
+	Modal,
 } from 'react-native';
 
-import ImagePicker from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import DatePicker from 'react-native-datepicker';
 import Button from '../public/Button';
 import TopTitle from '../public/TopTitle';
 import InputText from '../public/InputText';
+import Toast from 'react-native-root-toast';
+import DatePicker from 'react-native-datepicker';
+import ImagePicker from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
-var maxImageSize = 1024 * 1024 * 3;	// 3M
+var maxImageSize = 1024 * 1024 * 2;	// 2M
+var maxImageSizeM = 2;
+var maxPX = 1800;	// 1800像素
 
 // More info on all the options is below in the README...just some common use cases shown here
 var options = {
@@ -29,6 +32,8 @@ var options = {
     takePhotoButtonTitle: '拍照 (不可用)',
     chooseFromLibraryButtonTitle: '选择相册',
 	quality: 0.7,
+	maxWidth: maxPX,
+	maxHeight: maxPX,
 	allowsEditing: true,
     storageOptions: {
         skipBackup: true,
@@ -42,58 +47,55 @@ export default class EditUser extends Component {
   	{
       	super(props);
       	this.state = {
-			userHeadImg : null,
-      		birthday : null,
+			birthday : null,
 			userInfo : null,
 			localUserId: null,
+			userHeadImg : null,
+			modalVisible : false,
       	};
 
 		// 部分可自行修改的内容
 		// 一些信息需人事确认修改 如果：部门，姓名等。
-		this.userHeadImg
-      	this.userInfo = null;
+		this.userInfo = null;
+		this.userHeadImg = null;
 		this.selectLocalImage = this.selectLocalImage.bind(this);
   	}
 
-  	componentDidMount() {
+  	componentWillMount() {
   		let that = this;
-		
-        AsyncStorage.getItem(Config.storageKey, function(err, result){
-            if(!err && result)
-            {
-				let _id = JSON.parse(result)._id;
-				if(_id && that.props.uid)
-				{
-					let url = Config.host + Config.getUserInfo;
-					Util.fetch(url, 'get', {
-						action : 'edit',
-						uid : that.props.uid,
-					}, function(ret){
-						if(ret && ret.uinfo){
-							that.userInfo = ret.uinfo;
-							that.setState({
-								birthday : ret.uinfo.Birthday,
-								localUserId : _id,
-								userInfo : ret.uinfo,
-								userHeadImg : ret.uinfo.HeadImg ? {uri: Config.host + '/images/' + ret.uinfo.HeadImg} : require('../../images/head.jpeg'),
-							});
-						}else{
-							alert('未查询到该用户信息')
-						}
+		let _id = that.props._id;
+		if(_id && this.props.uid)
+		{
+			let url = Config.host + Config.getUserInfo;
+			Util.fetch(url, 'get', {
+				action : 'edit',
+				uid : that.props.uid,
+			}, function(ret){
+				if(ret && ret.uinfo){
+					that.userInfo = ret.uinfo;
+					that.setState({
+						localUserId : _id,
+						userInfo : ret.uinfo,
+						birthday : ret.uinfo.Birthday,
+						userHeadImg : ret.uinfo.HeadImg ? {uri: Config.host + '/images/' + ret.uinfo.HeadImg} : require('../../images/head.jpeg'),
+					});
+				}else{
+					//alert('未查询到该用户信息');
+					Toast.show('未查询到该用户信息', {
+						duration: Toast.durations.LONG,
+						position: Toast.positions.CENTER,
+						hideOnPress: true,
 					});
 				}
-            }
-        });
+			});
+		}
   	}
 
   	render() {
 		let uinfo = this.state.userInfo || null;
-  		let {nav, route, uid} = this.props;
-		
+  		let {nav, route, uid} = this.props;	
 		if(!uinfo || !uid) return null;
-		
 		let disEdit = (uid == this.state.localUserId) ? false : true;
-		
   		return (
 			<View style={styles.flex}>
 				<TopTitle  title={route.title} showReturn={true} onPress={()=>{
@@ -111,7 +113,7 @@ export default class EditUser extends Component {
 								source={this.state.userHeadImg}
 								style={styles.headImage}
 							/>
-							<Text>点击更改</Text>
+							{disEdit ? null : <Text>点击更改</Text>}
 						</View>
 					</TouchableHighlight>
 					<View style={styles.inputView}>
@@ -262,16 +264,27 @@ export default class EditUser extends Component {
 
 							if(this.userInfo.Position == '')
 							{
-								alert('员工职位不能为空');
+								//alert('员工职位不能为空');
+								Toast.show('员工职位不能为空', {
+									duration: Toast.durations.LONG,
+									position: Toast.positions.CENTER,
+									hideOnPress: true,
+								});
 								return false;
 							}
 
 							if(this.userInfo.Mobile == '')
 							{
-								alert('员工手机不能为空');
+								//alert('员工手机不能为空');
+								Toast.show('员工手机不能为空', {
+									duration: Toast.durations.LONG,
+									position: Toast.positions.CENTER,
+									hideOnPress: true,
+								});
 								return false;
 							}
 
+							this.setState({modalVisible : true});
 							let that = this;
 							let url = Config.host + Config.saveUser;
 							Util.fetch(url, 'post', {
@@ -291,16 +304,33 @@ export default class EditUser extends Component {
 								
 								if(result && result.msg)
 								{
-									alert(result.msg);
-									if(result.err === 0)
-									{
-										nav.push({id : 'main'});
-									}
+									//alert(result.msg);
+									//if(result.err === 0)
+									//{
+									//	nav.push({id : 'main'});
+									//}
+									that.setState({modalVisible : false}, ()=>{
+										let toast = Toast.show(result.msg, {
+											duration: Toast.durations.LONG,
+											position: Toast.positions.CENTER,
+											hideOnPress: true,
+										});
+									});
 								}
 							});
 						}} />
 					</View>
 				</ScrollView>
+				<Modal
+                    animationType={"none"}
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {}}
+                >
+					<View style={styles.modalBody}>
+						<Text style={styles.modalText}>正在更新中 ..</Text>
+					</View>
+				</Modal>
 			</View>
   		);
 	}
@@ -322,30 +352,32 @@ export default class EditUser extends Component {
             else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             }
-			else if (response.fileSize > maxImageSize) {
-				alert('你上传图片过大');
+			else if (!response.data)
+			{
+				return false;
+			}
+			else if (response.width > maxPX || response.height > maxPX)
+			{
+				Toast.show('你上传的图片像素过大(最大' + maxPX + '*' + maxPX + ')', {
+					duration: Toast.durations.LONG,
+					position: Toast.positions.CENTER,
+					hideOnPress: true,
+				});
+				return false;
+			}
+			else if(response.type != 'image/jpeg' && response.type != 'image/png' && response.type != 'image/gif' && response.type != 'image/bmp')
+			{
+				//alert('你上传的图片类型不对');
+				Toast.show('你上传的图片类型不可用', {
+					duration: Toast.durations.LONG,
+					position: Toast.positions.CENTER,
+					hideOnPress: true,
+				});
 				return false;
 			}
             else {
-				switch(response.type){
-					case 'image/jpeg' :
-						this.userInfo.imageType = 'jpg';
-						break;
-					case 'image/png' :
-						this.userInfo.imageType = 'png';
-						break;
-					case 'image/gif' : 
-						this.userInfo.imageType = 'gif';
-						break;
-					case 'image/bmp' : 
-						this.userInfo.imageType = 'bmp';
-						break;
-					default : 
-						alert('你上传的图片类型不对');
-						return false;
-				}
-
 				this.userHeadImg = response;
+				this.userInfo.imageType = response.type;
 				this.userInfo.imageData = response.data;
                 let source = {uri: response.uri};
                 // You can also display the image using data:
@@ -373,6 +405,20 @@ const styles = StyleSheet.create({
         letterSpacing : 5,
         fontStyle : 'italic',
     },
+	modalBody : {
+		flex : 1,
+		alignItems: 'center',
+        justifyContent: 'center',
+	},
+	modalText : {
+		color : '#fff',
+		paddingTop : 30,
+		paddingBottom : 30,
+		paddingLeft : 20,
+		paddingRight : 20,
+		borderRadius : 18,
+		backgroundColor : 'rgba(0, 0, 0, 0.8)',
+	},
 	headView : {
 		height : 80,
 		flexDirection : 'row',

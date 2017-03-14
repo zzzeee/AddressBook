@@ -9,12 +9,12 @@ import {
     Navigator,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
-import TopTitle from '../public/TopTitle';
 import Main from './Main';
-import ChangeUserPwd from './ChangeUserPwd';
 import AddUser from './AddUser';
 import AddNotice from './AddNotice';
+import TopTitle from '../public/TopTitle';
+import ChangeUserPwd from './ChangeUserPwd';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
@@ -31,7 +31,7 @@ export default class Management extends Component {
       	this.userInfo = {};
   	}
 
-  	componentDidMount() {
+  	componentWillMount() {
   		let that = this;
         AsyncStorage.getItem(Config.storageKey, function(err, result){
             if(!err && result)

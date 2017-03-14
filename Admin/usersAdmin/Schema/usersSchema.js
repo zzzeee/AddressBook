@@ -30,6 +30,7 @@ var usersSchema = new mongoose.Schema({
 	IsJob : {type: Boolean, default : true},		//是否在职
 	EntryTime : { type:Date, default:Date.now },	//入职时间
 	AddTime : { type:Date, default:Date.now },		//添加时间
+	EditTime : {type: String},						//编辑时间(时间戳)
 });
 
 usersSchema.statics.findLog = function(_where_, _sort_, _skip_, _limit_, callback){

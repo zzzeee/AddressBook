@@ -31,9 +31,9 @@ export default class About extends Component {
   	{
       	super(props);
       	this.state = {
-      		userInfoLocal : null,
-            userInfoQuery: null,
             datas : null,
+            userInfoQuery : null,
+      		userInfoLocal : null,
             dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       	};
        
@@ -57,29 +57,17 @@ export default class About extends Component {
             AsyncStorage.getItem(Config.storageKey, function(err, result){
                 if(!err && result)
                 {
-                    let url = Config.host + Config.getUserInfo;
-                    Util.fetch(url, 'get', {
-                        action : 'edit',
-                        uid : uid,
-                    }, function(result2){
-                        if(result2) {
-                            if(result2.uinfo){
-                                let url2 = Config.host + Config.notices;
-                                Util.fetch(url2, 'get', {
-                                    text : result2.uinfo.UserName
-                                }, function(result3){
-                                    var ret = result3 || [];
-                                    that.setState({
-                                        datas : ret,
-                                        userInfoQuery : result2.uinfo,
-                                        userInfoLocal : JSON.parse(result),
-                                        dataSource: that.state.dataSource.cloneWithRows(ret)
-                                    });
-                                });
-                            }else {
-                                alert('查不到该员工的信息');
-                            }
-                        }
+                    let uinfo = JSON.parse(result);
+                    let url2 = Config.host + Config.notices;
+                    Util.fetch(url2, 'get', {
+                        text : uinfo.UserName
+                    }, function(result3){
+                        var ret = result3 || [];
+                        that.setState({
+                            datas : ret,
+                            userInfoLocal : uinfo,
+                            dataSource: that.state.dataSource.cloneWithRows(ret)
+                        });
                     });
                 }
             });
@@ -106,7 +94,7 @@ export default class About extends Component {
                 return <NoticeDetails route={route} nav={navigator} />;
 				break;
             case 'editUser' : 
-                return <EditUser nav={navigator} route={route} uid={route.uid} />;
+                return <EditUser nav={navigator} route={route} _id={this.state.userInfoLocal._id} uid={route.uid} />;
                 break;
             case 'users' :
 				return <UserList 
@@ -338,7 +326,7 @@ const styles = StyleSheet.create({
 		width : 42,
 		height : 43,
 		borderRadius : 6,
-		backgroundColor : Config.appColor,
+		backgroundColor : '#994811',
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
@@ -374,7 +362,7 @@ const styles = StyleSheet.create({
 		paddingBottom : 3,
 		paddingLeft : 5,
 		paddingRight : 5,
-		backgroundColor : 'rgba(140, 16, 67, 0.8)',
+		backgroundColor : 'rgba(190, 48, 95, 0.8)',
 	},
 	noticeType : {
 		color : '#fff',

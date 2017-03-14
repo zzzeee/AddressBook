@@ -53,7 +53,7 @@ export default class AddUser extends Component {
       	};
   	}
 
-  	componentDidMount() {
+  	componentWillMount() {
   		let {route} = this.props;
   		this.username = route.username;
 

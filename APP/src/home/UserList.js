@@ -29,7 +29,7 @@ export default class DepUsers extends Component {
       	this.queryUserList = this.queryUserList.bind(this);
   	}
 
-  	componentDidMount() {
+  	componentWillMount() {
   		this.queryUserList(this.props.obj);
   	}
 

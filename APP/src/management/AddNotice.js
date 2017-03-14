@@ -35,7 +35,7 @@ export default class AddUser extends Component {
       	this.username = '';
   	}
 
-  	componentDidMount() {
+  	componentWillMount() {
   		let {route} = this.props;
 		this.userid = route.userid;
   		this.uname = route.uname;

@@ -31,7 +31,7 @@ export default class About extends Component {
       	this._navigator = {};
   	}
 
-  	componentDidMount() { 
+  	componentWillMount() { 
   		this.getNoticeList(null);
   	}
 
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
 		paddingBottom : 3,
 		paddingLeft : 5,
 		paddingRight : 5,
-		backgroundColor : 'rgba(140, 16, 67, 0.8)',
+		backgroundColor : 'rgba(190, 48, 95, 0.8)',
 	},
 	noticeType : {
 		color : '#fff',

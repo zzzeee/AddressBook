@@ -11,9 +11,9 @@ import {
     Linking,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Toast from 'react-native-root-toast';
 import Button from '../public/Button';
+import Toast from 'react-native-root-toast';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
@@ -34,11 +34,11 @@ export default class About extends Component {
 
     componentDidMount() {
         //alert('componentDidMount');
-        this._route = this.props.route;
-        this._navigator = this.props.nav;
     }
 
     componentWillMount() {
+        this._route = this.props.route;
+        this._navigator = this.props.nav;
         this.initData(this.props.uid);
     }
 
@@ -67,11 +67,14 @@ export default class About extends Component {
 
     //个人中心的头部
     render() {
-        if(!this.state.userInfoLocal || !this.state.userInfoQuery) return null;
-        let isSelf = this.props.uid == this.state.userInfoLocal._id ? true : false;
-        let userinfo = this.state.userInfoQuery;
-        let img = userinfo.HeadImg ? {uri: Config.host + '/images/' + userinfo.HeadImg} : require('../../images/head.jpeg');
+        if(!this.state.userInfoLocal || !this.state.userInfoQuery){
+            return <View style={styles.topView}></View>;
+        }
 
+        let userinfo = this.state.userInfoQuery;
+        let isSelf = this.props.uid == this.state.userInfoLocal._id ? true : false;
+        let img = userinfo.HeadImg ? {uri: Config.host + '/images/' + userinfo.HeadImg} : require('../../images/head.jpeg');
+        
         return (
             <View style={styles.topView}>
                 {/*
@@ -81,7 +84,7 @@ export default class About extends Component {
                     contain:图片拉伸  充满空间
                 */}
                 <Image
-                    source={require('../../images/userBG.jpg')} 
+                    source={require('../../images/userBG2.jpg')} 
                     resizeMode={Image.resizeMode.strech}
                     style={styles.topImgView}
                 >
@@ -90,7 +93,7 @@ export default class About extends Component {
                         <Text style={styles.nameText}>
                             {userinfo.Department + ' ● ' + userinfo.Name}
                         </Text>
-                        <Icon name={isSelf ? 'edit' : 'search'} size={16} color='#eee' backgroundColor='rgba(0, 0, 0, 0.2)' />
+                        <Icon name={isSelf ? 'edit' : 'search'} size={14} color='#994811' backgroundColor='rgba(0, 0, 0, 0.2)' />
                     </View>
                 </TouchableHighlight>
                 </Image>
@@ -144,12 +147,14 @@ export default class About extends Component {
                 }
                 <TouchableHighlight 
                     underlayColor='transparent' 
-                    style={styles.headBox} 
+                    style={styles.headBox}
                     onPress={()=>this.linkViewEditInfo(isSelf)}
                 >
                     <Image
                         source={img}
                         style={styles.headView}
+                        resizemode='contain'
+                        resizeMethod ='scale'
                     />
                 </TouchableHighlight>
                 <View style={styles.explainView}>
@@ -255,23 +260,23 @@ const styles = StyleSheet.create({
         alignItems : 'center',
     },
     nameText : {
-        color : '#eee',
+        color : '#994811',
         fontSize : 15,
-        paddingRight : 10,
-        backgroundColor : 'rgba(0, 0, 0, 0.2)',
+        marginRight : 10,
+        //backgroundColor : 'rgba(0, 0, 0, 0.1)',
     },
     btnBoxView : {
         height : 40,
         flexDirection : 'row',
         paddingLeft : 115,
         alignItems : 'center',
-        backgroundColor : '#ddd',
+        backgroundColor : '#e1fcdf',
     },
     button : {
         height : 22,
-        borderWidth : 1,
-        borderColor : '#aaa',
-        backgroundColor : '#fff',
+        //borderWidth : 1,
+        //borderColor : '#aaa',
+        backgroundColor : '#994811',
         marginLeft : 0,
         marginRight : 10,
         marginTop : 0,
@@ -279,7 +284,7 @@ const styles = StyleSheet.create({
         minWidth : 50,
     },
     buttonText : {
-        color : '#999'
+        color : '#fff'
     },
     headBox : {
         width : 80,
@@ -296,19 +301,19 @@ const styles = StyleSheet.create({
     explainView : {
         height : 60,
         padding : 10,
-        backgroundColor : '#dfdfdf',
+        backgroundColor : '#e1fcdf',
     },
     explainText : {
-        color : '#888',
+        color : '#666',
         lineHeight : 20,
     },
     noticeNum : {
         height : 30,
-        backgroundColor : '#999',
+        backgroundColor : '#D0FBCE',
         paddingLeft : 20,
         justifyContent : 'center',
     },
     noticeNumText : {
-        color : '#fff',
+        color : '#555',
     },
 });

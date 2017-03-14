@@ -25,7 +25,7 @@ export default class Main extends Component {
       	this.userInfo = {};
   	}
 
-  	componentDidMount() {
+  	componentWillMount() {
   		let that = this;
         AsyncStorage.getItem(Config.storageKey, function(err, result){
             if(!err && result)

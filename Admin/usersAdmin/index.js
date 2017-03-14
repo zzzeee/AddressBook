@@ -188,24 +188,22 @@ app.post('/saveUserInfo', urlencodedParser, function(req, res) {
 				var obj = From == 'app' ? 
 				{
 					Position : Position,
-					Mobile : Mobile,
-					Email : Email,
-					Address : Address,
-					Birthday : Birthday,
 					Explain : Explain,
 				} : {
 					Name : Name,
 					Department : Department,
-					Position : Position,
 					Level : Level,
-					Mobile : Mobile,
-					Email : Email,
-					Address : Address,
-					Birthday : Birthday,
 					EntryTime : EntryTime,
 					IsAddUser : req.body.IsAddUser ? true : false,
 					IsSendNotice : req.body.IsSendNotice ? true : false,
 				};
+
+				obj.Position = Position;
+				obj.Mobile = Mobile;
+				obj.Email = Email;
+				obj.Address = Address;
+				obj.Birthday = Birthday;
+				obj.EditTime = new Date().getTime();
 
 				if(From == 'app' && imageType && imageData)
 				{
@@ -227,7 +225,6 @@ app.post('/saveUserInfo', urlencodedParser, function(req, res) {
 							imageType = 'bmp';
 							break;
 					}
-
 					//fs.writeFile(fileMuLv + imgname + '.' + 'txt', imageData, function(err){});
 
 					imgname = imgname + '.' + imageType;
@@ -308,7 +305,7 @@ app.post('/saveUserInfo', urlencodedParser, function(req, res) {
 							}
 						}
 					});
-				}				
+				}			
 			}
 		});
 		
