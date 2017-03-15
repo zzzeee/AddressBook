@@ -56,6 +56,7 @@ export default class EditUser extends Component {
 
 		// 部分可自行修改的内容
 		// 一些信息需人事确认修改 如果：部门，姓名等。
+		this.toast = null;
 		this.userInfo = null;
 		this.userHeadImg = null;
 		this.selectLocalImage = this.selectLocalImage.bind(this);
@@ -81,7 +82,7 @@ export default class EditUser extends Component {
 					});
 				}else{
 					//alert('未查询到该用户信息');
-					Toast.show('未查询到该用户信息', {
+					that.toast = Toast.show('未查询到该用户信息', {
 						duration: Toast.durations.LONG,
 						position: Toast.positions.CENTER,
 						hideOnPress: true,
@@ -91,6 +92,11 @@ export default class EditUser extends Component {
 		}
   	}
 
+	componentWillUnmount() {
+		//this.toast && clearTimeout(this.toast);
+		//Toast.hide(this.toast);
+	}
+
   	render() {
 		let uinfo = this.state.userInfo || null;
   		let {nav, route, uid} = this.props;	
@@ -99,6 +105,7 @@ export default class EditUser extends Component {
   		return (
 			<View style={styles.flex}>
 				<TopTitle  title={route.title} showReturn={true} onPress={()=>{
+					Toast.hide(this.toast);
 					nav.push({id : route.returnId});
 				}} />
 				<ScrollView contentContainerStyle={styles.bodyBox}>
@@ -265,7 +272,7 @@ export default class EditUser extends Component {
 							if(this.userInfo.Position == '')
 							{
 								//alert('员工职位不能为空');
-								Toast.show('员工职位不能为空', {
+								this.toast = Toast.show('员工职位不能为空', {
 									duration: Toast.durations.LONG,
 									position: Toast.positions.CENTER,
 									hideOnPress: true,
@@ -276,7 +283,7 @@ export default class EditUser extends Component {
 							if(this.userInfo.Mobile == '')
 							{
 								//alert('员工手机不能为空');
-								Toast.show('员工手机不能为空', {
+								this.toast = Toast.show('员工手机不能为空', {
 									duration: Toast.durations.LONG,
 									position: Toast.positions.CENTER,
 									hideOnPress: true,
@@ -310,7 +317,7 @@ export default class EditUser extends Component {
 									//	nav.push({id : 'main'});
 									//}
 									that.setState({modalVisible : false}, ()=>{
-										let toast = Toast.show(result.msg, {
+										that.toast = Toast.show(result.msg, {
 											duration: Toast.durations.LONG,
 											position: Toast.positions.CENTER,
 											hideOnPress: true,
@@ -358,7 +365,7 @@ export default class EditUser extends Component {
 			}
 			else if (response.width > maxPX || response.height > maxPX)
 			{
-				Toast.show('你上传的图片像素过大(最大' + maxPX + '*' + maxPX + ')', {
+				this.toast = Toast.show('你上传的图片像素过大(最大' + maxPX + '*' + maxPX + ')', {
 					duration: Toast.durations.LONG,
 					position: Toast.positions.CENTER,
 					hideOnPress: true,
@@ -368,7 +375,7 @@ export default class EditUser extends Component {
 			else if(response.type != 'image/jpeg' && response.type != 'image/png' && response.type != 'image/gif' && response.type != 'image/bmp')
 			{
 				//alert('你上传的图片类型不对');
-				Toast.show('你上传的图片类型不可用', {
+				this.toast = Toast.show('你上传的图片类型不可用', {
 					duration: Toast.durations.LONG,
 					position: Toast.positions.CENTER,
 					hideOnPress: true,

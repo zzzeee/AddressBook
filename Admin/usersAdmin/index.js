@@ -296,7 +296,7 @@ app.post('/saveUserInfo', urlencodedParser, function(req, res) {
 						}else{
 							if(From == 'app'){
 								if(result){
-									res.send({err : 0, msg : '修改成功' + imgMsg});
+									res.send({err : 0, msg : '修改成功'});
 								}else{
 									res.send({err : 1, msg : '修改失败'});
 								}

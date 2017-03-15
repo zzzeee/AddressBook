@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Toast from 'react-native-root-toast';
 import Button from '../public/Button';
 import TopTitle from '../public/TopTitle';
 import EditUser from './EditUser';
