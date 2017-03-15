@@ -84,7 +84,7 @@ export default class About extends Component {
                     contain:图片拉伸  充满空间
                 */}
                 <Image
-                    source={require('../../images/userBG2.jpg')} 
+                    source={require('../../images/userbg.jpg')} 
                     resizeMode={Image.resizeMode.strech}
                     style={styles.topImgView}
                 >
@@ -93,7 +93,7 @@ export default class About extends Component {
                         <Text style={styles.nameText}>
                             {userinfo.Department + ' ● ' + userinfo.Name}
                         </Text>
-                        <Icon name={isSelf ? 'edit' : 'search'} size={14} color='#994811' backgroundColor='rgba(0, 0, 0, 0.2)' />
+                        <Icon name={isSelf ? 'edit' : 'search'} size={14} color='#fff' backgroundColor='rgba(0, 0, 0, 0.2)' />
                     </View>
                 </TouchableHighlight>
                 </Image>
@@ -258,25 +258,25 @@ const styles = StyleSheet.create({
         paddingLeft : 115,
         flexDirection : 'row',
         alignItems : 'center',
+        backgroundColor : 'rgba(0, 0, 0, 0.1)',
     },
     nameText : {
-        color : '#994811',
+        color : '#fff',
         fontSize : 15,
         marginRight : 10,
-        //backgroundColor : 'rgba(0, 0, 0, 0.1)',
     },
     btnBoxView : {
         height : 40,
         flexDirection : 'row',
         paddingLeft : 115,
         alignItems : 'center',
-        backgroundColor : '#e1fcdf',
+        backgroundColor : '#eee',
     },
     button : {
         height : 22,
-        //borderWidth : 1,
-        //borderColor : '#aaa',
-        backgroundColor : '#994811',
+        borderWidth : 1,
+        borderColor : '#aaa',
+        backgroundColor : '#ddd',
         marginLeft : 0,
         marginRight : 10,
         marginTop : 0,
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
         minWidth : 50,
     },
     buttonText : {
-        color : '#fff'
+        color : '#888'
     },
     headBox : {
         width : 80,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     explainView : {
         height : 60,
         padding : 10,
-        backgroundColor : '#e1fcdf',
+        backgroundColor : '#eee',
     },
     explainText : {
         color : '#666',
@@ -309,11 +309,11 @@ const styles = StyleSheet.create({
     },
     noticeNum : {
         height : 30,
-        backgroundColor : '#D0FBCE',
+        backgroundColor : Config.appColor,
         paddingLeft : 20,
         justifyContent : 'center',
     },
     noticeNumText : {
-        color : '#555',
+        color : '#fff',
     },
 });

@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
 		width : 42,
 		height : 43,
 		borderRadius : 6,
-		backgroundColor : '#994811',
+		backgroundColor : Config.appColor,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
