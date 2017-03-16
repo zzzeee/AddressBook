@@ -159,7 +159,9 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
     },
     loginButton : {
-        backgroundColor : '#069',
+        backgroundColor : '#19668c',
         width : Util.size.width * 0.8,
+        borderWidth : Util.pixel,
+        borderColor : '#5fd3e0'
     },
 });

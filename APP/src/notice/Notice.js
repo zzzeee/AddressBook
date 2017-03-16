@@ -40,18 +40,25 @@ export default class About extends Component {
 		    <Navigator
 		        initialRoute={{ title: this.props.title, id: this.props.pageId }}
 		        renderScene={this.rendNavigator}
+				onWillFocus={()=>{
+                    //GoToPageObj.pre_page = GoToPageObj.now_page;
+		            //GoToPageObj.pre_title = GoToPageObj.now_title;
+                }}
 		    />
 	    );
 	}
 
 	//跳转管理
 	rendNavigator = (route, navigator) => {
+		GoToPageObj.now_page = route.id;
+		GoToPageObj.now_title = route.title;
+		
 		switch(route.id){
 			case 'main' :
 				return (this.notice_List(route.title, navigator));
 				break;
 			case 'noticeView' :
-				return <NoticeDetails route={route} nav={navigator} viewUser={this.props.viewUser} />
+				return <NoticeDetails route={route} nav={navigator} />
 				break;
 			default : 
 				return false;
@@ -126,6 +133,7 @@ export default class About extends Component {
 						id:'noticeView',
 						notice: obj,
 						returnId: 'main',
+						returnTitle: this.props.title,
 					});
 				}}
 			>

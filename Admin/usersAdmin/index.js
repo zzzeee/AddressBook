@@ -762,6 +762,7 @@ app.get('/delDepartment', function(req, res) {
 //搜索公告列表
 app.get('/getNotices', function(req, res) {
 	var text = req.query.text || null;
+	var userid = req.query.userid || null;
 	var search = {};
 	if(text)
 	{
@@ -773,6 +774,10 @@ app.get('/getNotices', function(req, res) {
 				{Department : {$regex : new RegExp(text,"i")}},
 			]
 		};
+	}
+	else if(userid)
+	{
+		search = {UserId : userid};
 	}
 	
 	Notices.find(search, function(error, result) {

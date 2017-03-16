@@ -19,7 +19,10 @@ export default class AppTabBar extends Component {
 	  	let color = this.props.activeTab == i ? Config.appColor : "#666"; // 判断i是否是当前选中的tab，设置不同的颜色
 		
 		return (
-		    <TouchableOpacity key={i} onPress={()=>this.props.goToPage(i)} style={styles.tab}>
+		    <TouchableOpacity key={i} onPress={()=>{
+					if(GoToPageObj) GoToPageObj = {};
+					this.props.goToPage(i);
+				}} style={styles.tab}>
 		        <View style={styles.tabItem}>
 		            <Icon
 		                name={this.props.activeTab == i ? tab.selIcon : tab.icon}  // 图标

@@ -76,7 +76,7 @@ export default class About extends Component {
         let img = userinfo.HeadImg ? {uri: Config.host + '/images/' + userinfo.HeadImg} : require('../../images/head.jpeg');
         
         return (
-            <View style={styles.topView}>
+            <View>
                 {/*
                     Image组件的 resizeMode属性说明
                     cover:等比拉伸
@@ -160,7 +160,7 @@ export default class About extends Component {
                 <View style={styles.explainView}>
                     <ScrollView>
                         <Text style={styles.explainText}>
-                            {userinfo.Explain ? userinfo.Explain : '暂无简介'}
+                            {userinfo.Explain ? userinfo.Explain.replace(/[\r\n]/g, "") : '暂无简介'}
                         </Text>
                     </ScrollView>
                 </View>
@@ -173,11 +173,24 @@ export default class About extends Component {
 
     // 跳转到查看编辑用户信息页面
     linkViewEditInfo = (isSelf) => {
+        //alert(JSON.stringify(this._route));
+        let uid = this.props.uid || null;
+        let returnId = this._route.id || null;
+        let returnTitle = this._route.title || null;
+        let search = this._route.search || null;
+        let returnId2 = this._route.returnId || null;
+        let returnTitle2 = this._route.returnTitle || null;
+        
         this._navigator.push({
             title : isSelf ? '修改资料' : '查看资料', 
             id : 'editUser',
             returnId : 'main',
-            uid : this.props.uid,
+            uid : uid,
+            returnId : returnId,
+            returnTitle : returnTitle,
+            search : search,
+            returnId2 : returnId2,
+            returnTitle2 : returnTitle2,
         });
     };
 
@@ -299,7 +312,7 @@ const styles = StyleSheet.create({
         borderRadius : 40,
     },
     explainView : {
-        height : 60,
+        //height : 60,
         padding : 10,
         backgroundColor : '#eee',
     },

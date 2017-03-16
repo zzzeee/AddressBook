@@ -24,36 +24,47 @@ export default class NoticeDetails extends Component {
   	}
 
   	render() {
-	    var {route, nav, viewUser} = this.props;
-		if(!route.notice) return null;
+	    var {route, nav} = this.props;
+		let notice = route.notice ? route.notice : GoToPageObj.notice;
+		let retitle = route.returnTitle ? route.returnTitle : '公告';
+		if(!notice) return null;
 
 		return (
 			<View style={styles.flex}>
 				<View>
 					<TopTitle  title={route.title} showReturn={true} 
 						onPress={() => {
-							nav.push({id: route.returnId});
+							let obj = {id : 'main', title : retitle};
+							if(route.search) obj.search = route.search;
+							if(route.returnId2) obj.returnId = route.returnId2;
+							if(route.returnTitle2) obj.returnTitle = route.returnTitle2;
+
+							nav.push(obj);
 						}}
 					/>
 				</View>
 				<View style={styles.noticeBox}>
 					<ScrollView>
 						<View>
-							<Text style={styles.contentFristRow}>{'致 : ' + route.notice.Department}</Text>
-							<Text style={styles.allContentText}>{route.notice.Content}</Text>
+							<Text style={styles.contentFristRow}>{'致 : ' + notice.Department}</Text>
+							<Text style={styles.allContentText}>{notice.Content}</Text>
 						</View>
 						<View style={styles.contentLastRow}>
-							{viewUser ?
-								<TouchableHighlight underlayColor='transparent' onPress={()=>{
-									if(route.notice.UserId){
-										viewUser(route.notice.UserId);
-									}
-								}}>
-									<Text style={styles.smallText2}>{route.notice.Author}</Text>
-								</TouchableHighlight>
-								: <Text style={styles.smallText2}>{route.notice.Author}</Text>
-							}
-							<Text style={styles.smallText2}>{Util.getFormatDate(route.notice.AddTime, 1)}</Text>
+							<TouchableHighlight underlayColor='transparent' onPress={()=>{
+								if(notice.UserId && !route.dislink){
+									GoToPageObj.uid = notice.UserId;
+									GoToPageObj.index =3;
+									GoToPageObj.pre_page = GoToPageObj.now_page;
+									GoToPageObj.pre_index = GoToPageObj.now_index;
+									GoToPageObj.pre_title = GoToPageObj.now_title;
+									GoToPageObj.notice = notice;
+
+									GoToPage();
+								}
+							}}>
+								<Text style={styles.smallText2}>{notice.Author}</Text>
+							</TouchableHighlight>
+							<Text style={styles.smallText2}>{Util.getFormatDate(notice.AddTime, 1)}</Text>
 						</View>
 					</ScrollView>
 				</View>

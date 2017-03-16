@@ -20,6 +20,18 @@ import About from './about/About';
 var Util = require('./public/Util');
 var Config = require('./public/Config');
 
+/* ----------------- 全局变量 start ------------------ */
+global.GoToPage = function(){};
+global.GoToPageObj = {
+    now_page : null,       //当前主页下的哪个子页
+    now_index : 0,   //当前的哪个主页
+    now_title : null,   //当前页的标题
+    pre_page : null,    //上一页主页的哪个子页
+    pre_index : null,   //上一页的哪个主页
+    pre_title : null,   //上一页的标题
+};
+/* ----------------- 全局变量 end -------------------- */
+
 export default class APP extends Component {
     constructor(props) {
         super(props);
@@ -29,11 +41,7 @@ export default class APP extends Component {
             userInfo : null,
         };
 
-        this._id = null;
-        this.selectPage = 'main';
-        this.selectTitle = '';
         this.query = null;
-
         this.Menus = [
             {
                 name : '首页',
@@ -54,6 +62,7 @@ export default class APP extends Component {
             }
         ];
 
+        GoToPage = this.initGoToPage.bind(this);
         this.showLoadPage = this.showLoadPage.bind(this);
         this.showContentPage = this.showContentPage.bind(this);
     }
@@ -73,9 +82,9 @@ export default class APP extends Component {
     }
 
     componentDidUpdate() {
-        this._id = null;
-        this.selectTitle =  '';
-        this.selectPage = 'main';
+        GoToPageObj.uid = null;
+        GoToPageObj.title =  '';
+        GoToPageObj.page = 'main';
         this.query = null;
     }
 
@@ -128,6 +137,8 @@ export default class APP extends Component {
                                      * this.setState后有重宣染
                                      * 只是不走React周期的componentDidMount，直接进入render
                                      */
+                                    GoToPageObj.pre_index = GoToPageObj.now_index;
+                                    GoToPageObj.now_index = obj.i;
                                     this.setState({
                                         selectIndex : obj.i,
                                     });
@@ -182,20 +193,26 @@ export default class APP extends Component {
         switch(this.state.selectIndex){
             case 0 :
                 return <Home 
-                    title={this.returnTitle()} 
-                    query={this.query} 
-                    pageId={this.returnPage()} 
-                    viewUser={this.viewUserInfo} 
+                    title={this.returnTitle()}
+                    pageId={this.returnPage()}
+                    query={this.query}
                 />;
                 break;
             case 1 :
-                return <Notice title={this.returnTitle()} pageId={this.returnPage()} viewUser={this.viewUserInfo} />;
+                return <Notice 
+                    title={this.returnTitle()} 
+                    pageId={this.returnPage()}
+                />;
                 break;
             case 2 :
-                return <Management title={this.returnTitle()} pageId={this.returnPage()} logout={this.userLogout} />;
+                return <Management 
+                    title={this.returnTitle()} 
+                    pageId={this.returnPage()} 
+                    logout={this.userLogout}
+                />;
                 break;
             case 3 :
-                return <About 
+                return <About
                     title={this.returnTitle()} 
                     pageId={this.returnPage()}
                     _id={this.return_id()} 
@@ -209,23 +226,35 @@ export default class APP extends Component {
 
     //返回跳转页面的标题
     returnTitle = () => {
-        return this.selectTitle ? this.selectTitle : this.Menus[this.state.selectIndex].name;
+        return GoToPageObj.title ? GoToPageObj.title : this.Menus[this.state.selectIndex].name;
     };
 
     //返回跳转页面的第几层子页
     returnPage = () => {
-        return this.selectPage ? this.selectPage : 'main';
+        return GoToPageObj.page ? GoToPageObj.page : 'main';
     };
 
     //返回用户的_id
     return_id = () => {
-        return this._id ? this._id : this.state.userInfo._id;
+        return GoToPageObj.uid ? GoToPageObj.uid : this.state.userInfo._id;
     };
 
-    //查看员工信息
-    viewUserInfo = (id) => {
-        this._id = id;
-        this.refs.tabView1.goToPage(3);
+    //跳转至做任意页面的子页面
+    initGoToPage = () => {
+        let index = GoToPageObj.index;
+        let page = GoToPageObj.page || null;
+        
+        if((index || index === 0) && page)
+        {
+            //是否清空原数据
+            if(GoToPageObj.clear_pre) {
+                GoToPageObj.pre_page = null;
+                GoToPageObj.pre_index = null;
+                GoToPageObj.pre_title = null;
+                GoToPageObj.clear_pre = false;
+            }
+            this.refs.tabView1.goToPage(index);
+        }
     };
 }
 

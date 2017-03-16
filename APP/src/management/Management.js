@@ -46,12 +46,19 @@ export default class Management extends Component {
             <Navigator
                 initialRoute={{title: this.props.title, id: this.props.pageId}}
                 renderScene={this.rendNavigator}
+                onWillFocus={()=>{
+                    GoToPageObj.pre_page = GoToPageObj.now_page;
+		            GoToPageObj.pre_title = GoToPageObj.now_title;
+                }}
             />
         );   
     }
 
     //跳转管理
     rendNavigator = (route, navigator) => {
+        GoToPageObj.now_page = route.id;
+		GoToPageObj.now_title = route.title;
+
         switch(route.id){
             case 'main' :
                 return this.pageContent(route, navigator, false, <Main nav={navigator} route={route} logout={this.props.logout} />);

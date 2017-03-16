@@ -37,38 +37,36 @@ export default class About extends Component {
       	};
        
         this.user_id = null;
+        this._route = {};
         this._navigator = {};
   	}
 
     componentDidMount() {
-        //alert('componentDidMount');
+        
     }
 
     componentWillMount() {
-        this.user_id = this.props._id;
-        this.initData(this.user_id);
+        let that = this;
+        AsyncStorage.getItem(Config.storageKey, function(err, result){
+            if(!err && result) {
+                that.setState({userInfoLocal : JSON.parse(result)});
+            }
+        });
     }
 
     initData = (uid) => {
-        let that = this;
+        //alert(uid);
         if(uid)
         {
-            AsyncStorage.getItem(Config.storageKey, function(err, result){
-                if(!err && result)
-                {
-                    let uinfo = JSON.parse(result);
-                    let url2 = Config.host + Config.notices;
-                    Util.fetch(url2, 'get', {
-                        text : uinfo.UserName
-                    }, function(result3){
-                        var ret = result3 || [];
-                        that.setState({
-                            datas : ret,
-                            userInfoLocal : uinfo,
-                            dataSource: that.state.dataSource.cloneWithRows(ret)
-                        });
-                    });
-                }
+            let that = this;
+            let url = Config.host + Config.notices;
+            Util.fetch(url, 'get', {
+                userid : uid
+            }, function(result){
+                that.setState({
+                    datas : result,
+                    dataSource: that.state.dataSource.cloneWithRows(result)
+                });
             });
         }
     };
@@ -78,13 +76,24 @@ export default class About extends Component {
             <Navigator
                 initialRoute={{title: this.props.title, id: this.props.pageId}}
                 renderScene={this.rendNavigator}
+                onWillFocus={()=>{
+                    //GoToPageObj.pre_page = GoToPageObj.now_page;
+		            //GoToPageObj.pre_title = GoToPageObj.now_title;
+                    
+                    this.user_id = this.user_id ? this.user_id : this.props._id;
+                    this.initData(this.user_id);
+                }}
             />
         );
     }
 
     //跳转管理
     rendNavigator = (route, navigator) => {
+        GoToPageObj.now_page = route.id;
+		GoToPageObj.now_title = route.title;
+        this._route = route;
         this._navigator = navigator;
+        
         switch(route.id){
             case 'main' :
                 return (this.initPage(route, navigator));
@@ -130,13 +139,13 @@ export default class About extends Component {
 
     //初始化
     initPage = (route, navigator) => {
-        let isreturn = route.returnId ? true : false;
+        let return_pre = (GoToPageObj.hasOwnProperty('pre_index') && GoToPageObj.pre_page) ? true : false;
+        let isreturn = route.returnId || return_pre ? true : false;
         let title = route.title ? route.title : this.props.title;
         return (
             <View style={styles.flex}>
                 <TopTitle  title={title} showReturn={isreturn} onPress={()=>{
-                    if(isreturn)
-                    {
+                    if(route.returnId){
                         navigator.push({
                             id : route.returnId,
                             title : route.returnTitle,
@@ -146,63 +155,75 @@ export default class About extends Component {
                             search : route.search,
                         });
                     }
+                    else if (return_pre){
+                        //alert(JSON.stringify(GoToPageObj));
+                        GoToPageObj.page = GoToPageObj.pre_page;
+                        GoToPageObj.title = GoToPageObj.pre_title;
+                        GoToPageObj.index = GoToPageObj.pre_index;
+                        GoToPageObj.clear_pre = true;
+                        
+                        GoToPage();
+                    }
                 }} />
                 <View  style={styles.bodyBox}>
-                    {this.state.datas === null ? null : (this.state.datas.length ? 
-                        <ListView 
-                            dataSource={this.state.dataSource} 
-                            renderRow={this.renderNotice.bind(this)}
-                            enableEmptySections={true}  //允许空数据
-                            renderHeader={() => {
-                                return <AboutTop 
-                                    nav={navigator} 
-                                    route={route} 
-                                    uid={this.user_id} 
-                                    userinfo={this.state.userInfoLocal} 
-                                    noticeNum={this.state.datas.length} 
-                                />;
-                            }}
-                        />:
-                        <View style={styles.flex}>
-                            {this.initPageTop()}
-                            <View style={styles.noResult}>
-                                <Text style={styles.noResultText}>无公告列表</Text>
-                            </View>
-                        </View>
-					)}
+                    <ListView 
+                        dataSource={this.state.dataSource} 
+                        renderRow={this.renderNotice.bind(this)}
+                        enableEmptySections={true}  //允许空数据
+                        renderHeader={() => {
+                            return <AboutTop 
+                                nav={navigator} 
+                                route={route} 
+                                uid={this.user_id} 
+                                userinfo={this.state.userInfoLocal} 
+                                noticeNum={this.state.datas ? this.state.datas.length : 0} 
+                            />;
+                        }}
+                    />
+                </View>
+                <View style={styles.viewMySelfInfo}>
                 </View>
             </View>
         );
     };
 
     //单条公告
-	renderNotice = (obj, sectionID, rowID) => {
+	renderNotice = (notice, sectionID, rowID) => {
 		return (
 			<TouchableHighlight 
 				key={rowID}
                 underlayColor='transparent'
 				onPress={()=> {
-					this._navigator.push({
-						title: '公告详情', 
+					
+                    let obj = {
 						id:'noticeView',
-                        returnId : 'main',
-						notice: obj,
-					});
+                        title: '公告详情',
+                        notice: notice,
+                        dislink: true,
+                    }
+
+                    if(this._route.uid) obj.uid = this._route.uid;
+					if(this._route.id) obj.returnId = this._route.id;
+					if(this._route.title) obj.returnTitle = this._route.title;
+                    if(this._route.search) obj.search = this._route.search;
+                    if(this._route.returnId) obj.returnId2 = this._route.returnId;
+                    if(this._route.returnTitle) obj.returnTitle2 = this._route.returnTitle;
+                    this._navigator.push(obj);
 				}}
 			>
 			<View key={rowID} style={styles.oneNotice}>
 				<View style={styles.userFristView}>
-					<Text style={styles.userFristText}>{obj.Department.substring(0, 1)}</Text>
+					<Text style={styles.userFristText}>{notice.Department.substring(0, 1)}</Text>
 				</View>
 				<View style={styles.contentBox}>
 					<View>
-						<Text style={styles.contentTxt} numberOfLines={2}>{obj.Content}</Text>
+						<Text style={styles.contentTxt} numberOfLines={2}>{notice.Content}</Text>
 					</View>
 					<View style={styles.NameTimeBox}>
-						<Text style={styles.smallText}>{Util.getFormatDate(obj.AddTime, 1)}</Text>
+						<Text style={styles.smallText}>{Util.getFormatDate(notice.AddTime, 1)}</Text>
 					</View>
 				</View>
-				{obj.Type ?
+				{notice.Type ?
 					<View style={styles.noticeTypeBox}>
 						<Text style={styles.noticeType}>紧急</Text>
 					</View>

@@ -88,20 +88,28 @@ export default class Home extends Component {
 		    <Navigator
 		        initialRoute={{title: this.props.title, id: this.props.pageId}}
 		        renderScene={this.rendNavigator}
+				onWillFocus={()=>{
+                    //GoToPageObj.pre_page = GoToPageObj.now_page;
+		            //GoToPageObj.pre_title = GoToPageObj.now_title;
+                }}
 		    />
 	    );
 	}
 
 	//跳转管理
 	rendNavigator = (route, navigator) => {
+		GoToPageObj.now_page = route.id;
+		GoToPageObj.now_title = route.title;
+		
 		switch(route.id){
 			case 'main' :
 				return (this.initPage(navigator));
 				break;
 			case 'users' :
-				route.search = this.props.query ? this.props.query : route.search;
-
+				route.search = this.props.query ? this.props.query : (route.search ? route.search : GoToPageObj.UserListSearch);
+				
 				if(route.search){
+					GoToPageObj.UserListSearch = Object.assign({}, route.search);
 					let obj = {
 						search : JSON.stringify(route.search),
 						sort : 'UserName',
@@ -109,12 +117,12 @@ export default class Home extends Component {
 					};
 					return <UserList route={route} nav={navigator} return={()=>{
 						navigator.push({title: '首页', id: 'main'});
-					}} viewUser={this.props.viewUser} obj={obj} />;
+					}} obj={obj} />;
 				}else{
 					return null;
 				}
 				break;
-			default : 
+			default :
 				return false;
 		}
 	};

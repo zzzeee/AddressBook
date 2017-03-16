@@ -77,6 +77,14 @@ var Util = {
         }
     },
 
+    deepCopy: function(source) { 
+        var result = {}, that = this;
+        for (var key in source) {
+            result[key] = typeof source[key]==='object' ? that.deepCoyp(source[key]): source[key];
+        } 
+        return result; 
+    },
+
     //上传图片
     uploadImage: function (img, callback) {  
         let formData = new FormData();

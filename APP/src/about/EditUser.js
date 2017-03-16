@@ -29,7 +29,7 @@ var maxPX = 1800;	// 1800像素
 var options = {
     title: '请选择',
     cancelButtonTitle: '取消',
-    takePhotoButtonTitle: '拍照 (不可用)',
+    takePhotoButtonTitle: '拍照',
     chooseFromLibraryButtonTitle: '选择相册',
 	quality: 0.7,
 	maxWidth: maxPX,
@@ -48,7 +48,6 @@ export default class EditUser extends Component {
       	super(props);
       	this.state = {
 			birthday : null,
-			userInfo : null,
 			localUserId: null,
 			userHeadImg : null,
 			modalVisible : false,
@@ -58,6 +57,7 @@ export default class EditUser extends Component {
 		// 一些信息需人事确认修改 如果：部门，姓名等。
 		this.toast = null;
 		this.userInfo = null;
+		this._userInfo = null;
 		this.userHeadImg = null;
 		this.selectLocalImage = this.selectLocalImage.bind(this);
   	}
@@ -74,9 +74,9 @@ export default class EditUser extends Component {
 			}, function(ret){
 				if(ret && ret.uinfo){
 					that.userInfo = ret.uinfo;
+					that._userInfo = Object.assign({}, ret.uinfo);
 					that.setState({
 						localUserId : _id,
-						userInfo : ret.uinfo,
 						birthday : ret.uinfo.Birthday,
 						userHeadImg : ret.uinfo.HeadImg ? {uri: Config.host + '/images/' + ret.uinfo.HeadImg} : require('../../images/head.jpeg'),
 					});
@@ -98,15 +98,37 @@ export default class EditUser extends Component {
 	}
 
   	render() {
-		let uinfo = this.state.userInfo || null;
+		let uinfo = this.userInfo || null;
   		let {nav, route, uid} = this.props;	
-		if(!uinfo || !uid) return null;
+		if(!uinfo || !uid) {
+			return (
+				<View style={styles.loadBox}>
+					<Text style={styles.loadTxt}>正在加载 ..</Text>
+				</View>
+			);
+		}
 		let disEdit = (uid == this.state.localUserId) ? false : true;
   		return (
 			<View style={styles.flex}>
+				<Modal
+                    animationType={"none"}
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {}}
+                >
+					<View style={styles.modalBody}>
+						<Text style={styles.modalText}>正在更新中 ..</Text>
+					</View>
+				</Modal>
 				<TopTitle  title={route.title} showReturn={true} onPress={()=>{
-					Toast.hide(this.toast);
-					nav.push({id : route.returnId});
+					this.toast && Toast.hide(this.toast);
+					let obj = {id : route.returnId, title : route.returnTitle};
+					
+					if(route.search) obj.search = route.search;
+					if(route.returnId2) obj.returnId = route.returnId2;
+					if(route.returnTitle2) obj.returnTitle = route.returnTitle2;
+
+					nav.push(obj);
 				}} />
 				<ScrollView contentContainerStyle={styles.bodyBox}>
 					<TouchableHighlight underlayColor='transparent' onPress={()=>{
@@ -267,7 +289,7 @@ export default class EditUser extends Component {
 
 					<View style={styles.btnAddUser}>
 						<Button text='修 改' style={{backgroundColor : (disEdit ? '#ccc' : Config.appColor)}} onPress={()=>{
-							if(disEdit) return false;
+							if(disEdit || this.state.modalVisible) return false;
 
 							if(this.userInfo.Position == '')
 							{
@@ -284,6 +306,23 @@ export default class EditUser extends Component {
 							{
 								//alert('员工手机不能为空');
 								this.toast = Toast.show('员工手机不能为空', {
+									duration: Toast.durations.LONG,
+									position: Toast.positions.CENTER,
+									hideOnPress: true,
+								});
+								return false;
+							}
+
+							//判断是否修改信息
+							if((!this.userHeadImg || (this.userHeadImg && this.userHeadImg.data == this._userInfo.imageData)) && 
+								this.userInfo.Position == this._userInfo.Position && 
+								this.userInfo.Mobile == this._userInfo.Mobile && 
+								this.userInfo.Email == this._userInfo.Email && 
+								this.userInfo.Address == this._userInfo.Address && 
+								this.userInfo.Explain == this._userInfo.Explain &&
+								this.userInfo.Birthday == this.state.birthday)
+							{
+								this.toast = Toast.show('资料未修改，无需提交。', {
 									duration: Toast.durations.LONG,
 									position: Toast.positions.CENTER,
 									hideOnPress: true,
@@ -317,10 +356,13 @@ export default class EditUser extends Component {
 									//	nav.push({id : 'main'});
 									//}
 									that.setState({modalVisible : false}, ()=>{
+										for(let key in that.userInfo)
+										{
+											that._userInfo[key] = that.userInfo[key];
+										}
+
 										that.toast = Toast.show(result.msg, {
-											duration: Toast.durations.LONG,
 											position: Toast.positions.CENTER,
-											hideOnPress: true,
 										});
 									});
 								}
@@ -328,16 +370,6 @@ export default class EditUser extends Component {
 						}} />
 					</View>
 				</ScrollView>
-				<Modal
-                    animationType={"none"}
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => {}}
-                >
-					<View style={styles.modalBody}>
-						<Text style={styles.modalText}>正在更新中 ..</Text>
-					</View>
-				</Modal>
 			</View>
   		);
 	}
