@@ -120,7 +120,7 @@ export default class EditUser extends Component {
 						<Text style={styles.modalText}>正在更新中 ..</Text>
 					</View>
 				</Modal>
-				<TopTitle  title={route.title} showReturn={true} onPress={()=>{
+				<TopTitle  title={route.title} showReturn={true} appColor={Config.appColor} onPress={()=>{
 					this.toast && Toast.hide(this.toast);
 					let obj = {id : route.returnId, title : route.returnTitle};
 					
@@ -451,12 +451,12 @@ const styles = StyleSheet.create({
 	},
 	modalText : {
 		color : '#fff',
-		paddingTop : 30,
-		paddingBottom : 30,
-		paddingLeft : 20,
-		paddingRight : 20,
+		padding : 30,
 		borderRadius : 18,
-		backgroundColor : 'rgba(0, 0, 0, 0.8)',
+        fontSize : 16,
+        borderWidth : 2,
+        borderColor : '#aaa',
+		backgroundColor : 'rgba(0, 0, 0, 0.92)',
 	},
 	headView : {
 		height : 80,

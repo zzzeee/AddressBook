@@ -23,7 +23,7 @@ export default class TopTitle extends Component {
 		let {title, onPress, showReturn} = this.props;
 		
 	    return (
-	    	<View style={styles.topBox}>
+	    	<View style={[styles.topBox, this.props.appColor ? {backgroundColor: this.props.appColor} : {}]}>
 	    		<View style={styles.sideBox}>
 	    			{this.props.showReturn ?
 	    				<TouchableHighlight underlayColor='transparent' style={styles.btn} onPress={onPress}>
@@ -46,10 +46,10 @@ var styles = StyleSheet.create({
 	topBox : {
 		height : 60,
 		flexDirection : 'row',
-		backgroundColor : Config.appColor,
 		justifyContent : 'center',
 		alignItems: 'flex-end',
 		paddingBottom : 4,
+		backgroundColor : Config.appColor,
 	},
 	sideBox : {
 		flex : 1,

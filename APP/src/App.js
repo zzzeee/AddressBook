@@ -21,14 +21,23 @@ var Util = require('./public/Util');
 var Config = require('./public/Config');
 
 /* ----------------- 全局变量 start ------------------ */
+//全局跳转函数
 global.GoToPage = function(){};
+//全局跳转携带的参数(可添加)
 global.GoToPageObj = {
-    now_page : null,       //当前主页下的哪个子页
-    now_index : 0,   //当前的哪个主页
+    now_page : null,    //当前主页下的哪个子页
+    now_index : 0,      //当前的哪个主页
     now_title : null,   //当前页的标题
     pre_page : null,    //上一页主页的哪个子页
     pre_index : null,   //上一页的哪个主页
     pre_title : null,   //上一页的标题
+};
+//跳转至当前页(刷新)
+global.GoToPageSelf = function(){
+    GoToPageObj.page = GoToPageObj.now_page;
+    GoToPageObj.index = GoToPageObj.now_index;
+    GoToPageObj.title = GoToPageObj.now_title;
+    GoToPage();
 };
 /* ----------------- 全局变量 end -------------------- */
 
@@ -72,10 +81,14 @@ export default class APP extends Component {
         AsyncStorage.getItem(Config.storageKey, function(err, result){
             if(!err)
             {
+                let user = JSON.parse(result) || {};
+                if(user && user.appColor) {
+                    Config.appColor = user.appColor;
+                }
                 //如果已登录，去除登录页面
                 that.setState({
                     showLogin : result ? false : true,
-                    userInfo : result ? JSON.parse(result) : {},
+                    userInfo : user,
                 });
             }
         });
@@ -195,6 +208,7 @@ export default class APP extends Component {
                 return <Home 
                     title={this.returnTitle()}
                     pageId={this.returnPage()}
+                    appColor={Config.appColor}
                     query={this.query}
                 />;
                 break;
@@ -202,12 +216,14 @@ export default class APP extends Component {
                 return <Notice 
                     title={this.returnTitle()} 
                     pageId={this.returnPage()}
+                    appColor={Config.appColor}
                 />;
                 break;
             case 2 :
                 return <Management 
                     title={this.returnTitle()} 
-                    pageId={this.returnPage()} 
+                    pageId={this.returnPage()}
+                    appColor={Config.appColor} 
                     logout={this.userLogout}
                 />;
                 break;
@@ -215,6 +231,7 @@ export default class APP extends Component {
                 return <About
                     title={this.returnTitle()} 
                     pageId={this.returnPage()}
+                    appColor={Config.appColor}
                     _id={this.return_id()} 
                     logout={this.userLogout}
                 />;
@@ -236,7 +253,8 @@ export default class APP extends Component {
 
     //返回用户的_id
     return_id = () => {
-        return GoToPageObj.uid ? GoToPageObj.uid : this.state.userInfo._id;
+        let uid = GoToPageObj.uid ? GoToPageObj.uid : this.state.userInfo._id;
+        return uid;
     };
 
     //跳转至做任意页面的子页面

@@ -14,6 +14,7 @@ import AddUser from './AddUser';
 import AddNotice from './AddNotice';
 import TopTitle from '../public/TopTitle';
 import ChangeUserPwd from './ChangeUserPwd';
+import SelectTheme from './SelectTheme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 var Util = require('../public/Util');
@@ -34,8 +35,7 @@ export default class Management extends Component {
   	componentWillMount() {
   		let that = this;
         AsyncStorage.getItem(Config.storageKey, function(err, result){
-            if(!err && result)
-            {
+            if(!err && result) {
                 that.userInfo = JSON.parse(result);
             }
         });
@@ -72,6 +72,9 @@ export default class Management extends Component {
             case 'management_addnotice' :
                 return this.pageContent(route, navigator, true, <AddNotice nav={navigator} route={route} />);
                 break;
+            case 'management_theme' :
+                return this.pageContent(route, navigator, true, <SelectTheme nav={navigator} route={route} />);
+                break;
             default : 
                 return null;
                 break;
@@ -82,7 +85,7 @@ export default class Management extends Component {
     pageContent = (route, nav, isReturn, body) => {
         return (
             <View style={styles.flex}>
-                <TopTitle  title={route.title} showReturn={isReturn} 
+                <TopTitle  title={route.title} appColor={Config.appColor} showReturn={isReturn} 
                     onPress={() => {
                         nav.push({title:'管理', id:'main'});
                     }}

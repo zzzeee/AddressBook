@@ -115,7 +115,7 @@ export default class Home extends Component {
 						sort : 'UserName',
 						order : 'ASC',
 					};
-					return <UserList route={route} nav={navigator} return={()=>{
+					return <UserList route={route} nav={navigator} appColor={Config.appColor} return={()=>{
 						navigator.push({title: '首页', id: 'main'});
 					}} obj={obj} />;
 				}else{
@@ -131,7 +131,7 @@ export default class Home extends Component {
 	initPage = (navigator) => {
 		return (
 			<View style={styles.flex}>
-				<TopTitle  title={this.props.title} showReturn={false} />
+				<TopTitle  title={this.props.title} appColor={Config.appColor} showReturn={false} />
 				{this.state.showLoad ?
 					(this.fetchErrorView()) :
 					<View  style={styles.menuBox}>
@@ -164,7 +164,6 @@ export default class Home extends Component {
 		return (
 			<TouchableHighlight 
 				key={i}
-				activeOpacity={1}
 				underlayColor='transparent'
 				onPress={()=> {
 					navigator.push({
@@ -175,7 +174,7 @@ export default class Home extends Component {
 				}}
 			>
 				<View style={[styles.depItem, {'backgroundColor' : colorList[i ? i % colorList.length : 0]}]}>
-					<Text style={styles.depItemText}>
+					<Text style={styles.depItemText} numberOfLines={1}>
 						{obj.ShowName}
 					</Text>
 				</View>
@@ -218,18 +217,18 @@ const styles = StyleSheet.create({
 		backgroundColor : '#fff',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		padding : 10,
+		padding : 5,
 	},
 	depItem : {
-		height: (Util.size.width - 100) / 4,
+		height: (Util.size.width - 50) / 4,
 		borderRadius : 5,
-		margin : 10,
+		margin : 5,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	depItemText : {
 		color : '#fff',
-		minWidth : (Util.size.width - 100) / 4,
+		width : (Util.size.width - 50) / 4,
 		textAlign : 'center',
 		paddingLeft : 10,
 		paddingRight: 10,

@@ -6,12 +6,9 @@ import {
 	Alert,
 	ScrollView,
 	TextInput,
-	Picker,
 	Switch,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
-import DatePicker from 'react-native-datepicker';
 import Button from '../public/Button';
 import PickerAndroidIOS from '../public/PickerAndroidIOS';
 
@@ -48,8 +45,7 @@ export default class AddUser extends Component {
   		Util.fetch(url, 'get', {
   			action : 'add'
         }, function(result){
-        	if(result && result.dep)
-        	{
+        	if(result && result.dep) {
         		result.dep.unshift({Name : '所有部门'});
         		that.setState({
 	            	departments : result.dep,
@@ -113,17 +109,12 @@ export default class AddUser extends Component {
 					  			department : this.state.selDepartment,
 					  			content : this.notice_txt
 					  		}, function(result){
-					        	if(result && result.msg)
-					        	{
+					        	if(result && result.msg) {
 					        		alert(result.msg);
-
-					        		if(result.err === 0)
-					        		{
+					        		if(result.err === 0) {
 					        			nav.push({title:'管理', id:'main'});
 					        		}
-					        	}
-					        	else
-					        	{
+					        	}else {
 					        		alert('请求失败');
 					        	}
 					        });

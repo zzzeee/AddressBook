@@ -87,7 +87,7 @@ export default class About extends Component {
 		return (
 			<View style={styles.flex}>
 				<View>
-					<TopTitle  title={title} showReturn={false} 
+					<TopTitle  title={title} appColor={Config.appColor} showReturn={false} 
 						onPress={() => {
 							navigator.push({title: this.props.title, id: this.props.pageId});
 						}}
@@ -138,7 +138,7 @@ export default class About extends Component {
 				}}
 			>
 			<View key={rowID} style={styles.oneNotice}>
-				<View style={styles.userFristView}>
+				<View style={[styles.userFristView, this.props.appColor ? {backgroundColor: this.props.appColor} : {}]}>
 					<Text style={styles.userFristText}>{obj.Department.substring(0, 1)}</Text>
 				</View>
 				<View style={styles.contentBox}>

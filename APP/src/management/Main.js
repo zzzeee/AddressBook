@@ -28,8 +28,7 @@ export default class Main extends Component {
   	componentWillMount() {
   		let that = this;
         AsyncStorage.getItem(Config.storageKey, function(err, result){
-            if(!err && result)
-            {
+            if(!err && result) {
                 that.userInfo = JSON.parse(result);
             }
         });
@@ -39,8 +38,7 @@ export default class Main extends Component {
   		let that = this;
   		let {route, nav} = this.props;
 
-  		if(this.state.userInfo || true)
-  		{
+  		if(this.state.userInfo || true) {
   			return (
   				<View style={styles.bodyBox}>
   					<View>
@@ -54,12 +52,9 @@ export default class Main extends Component {
 
   						{this.buttonItem('user-plus', '新增员工', '#2FB953', () => {
   							let IsAddUser = this.userInfo.IsAddUser ? false : true;
-  							if(IsAddUser)
-  							{
+  							if(IsAddUser) {
   								alert('对不起，你没有新增员工的权限。');
-  							}
-  							else
-  							{
+  							}else {
   								nav.push({
 	  								title : '新增员工', 
 	  								id : 'management_adduser',
@@ -70,12 +65,9 @@ export default class Main extends Component {
 
   						{this.buttonItem('send', '发布公告', '#228CBF', () => {
   							let IsSendNotice = this.userInfo.IsSendNotice ? false : true;
-  							if(IsSendNotice)
-  							{
+  							if(IsSendNotice) {
   								alert('对不起，你没有发布公告的权限。');
-  							}
-  							else
-  							{
+  							}else {
   								nav.push({
 	  								title : '发布公告', 
 	  								id : 'management_addnotice',
@@ -85,6 +77,14 @@ export default class Main extends Component {
                                     department : this.userInfo.Department,
 	  							});
   							}
+  						})}
+
+						{this.buttonItem('delicious', '更换主题', '#FFC107', () => {
+							nav.push({
+								title : '选择主题', 
+								id : 'management_theme',
+								uinfo : this.userInfo,
+							});
   						})}
   					</View>
 
@@ -104,9 +104,7 @@ export default class Main extends Component {
   					</View>
   				</View>
 			);
-  		}
-  		else
-  		{
+  		}else {
   			return null;
   		}
 	}
@@ -117,8 +115,13 @@ export default class Main extends Component {
 	          	onPress={() => callback()}
 	      	>
 	          	<View style={styles.buttonItemStyle}>
-	          		<Icon name={icon} size={16} color={color}/>
-	            	<Text style={styles.buttonText}>{text}</Text>
+					<View style={styles.buttonItemLeft}>
+						<Icon name={icon} size={16} color={color}/>
+						<Text style={styles.buttonText}>{text}</Text>
+					</View>
+					<View style={styles.flex}>
+						<Icon name={'chevron-right'} size={14} color={'#999'}/>
+					</View>
 	          	</View>
 	        </TouchableOpacity>
 		);
@@ -156,6 +159,12 @@ const styles = StyleSheet.create({
 		backgroundColor : '#fff',
 		borderBottomWidth : Util.pixel,
 		borderBottomColor : '#ccc',
+		flexDirection : 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	},
+	buttonItemLeft : {
+		flex : 9,
 		flexDirection : 'row',
 		alignItems: 'center',
 	},

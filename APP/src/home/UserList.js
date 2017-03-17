@@ -39,7 +39,7 @@ export default class DepUsers extends Component {
 		return (
 			<View style={styles.body}>
 				<View>
-					<TopTitle title={route.title} showReturn={true} 
+					<TopTitle title={route.title} showReturn={true} appColor={Config.appColor}
 						onPress={() => {
 							this.props.return();
 						}}
@@ -90,7 +90,7 @@ export default class DepUsers extends Component {
 	renderUser = (obj, sectionID, rowID) => {
 		return (
 			<View key={rowID} style={styles.oneUserView}>
-				<View style={styles.userFristView}>
+				<View style={[styles.userFristView, this.props.appColor ? {backgroundColor: this.props.appColor} : {}]}>
 					<Text style={styles.userFristText}>{obj.Name.substring(0, 1)}</Text>
 				</View>
 				<View style={styles.userNameView}>

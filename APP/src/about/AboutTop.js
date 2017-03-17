@@ -148,7 +148,9 @@ export default class About extends Component {
                 <TouchableHighlight 
                     underlayColor='transparent' 
                     style={styles.headBox}
-                    onPress={()=>this.linkViewEditInfo(isSelf)}
+                    onPress={()=>{
+                        this.linkViewEditInfo(isSelf);
+                    }}
                 >
                     <Image
                         source={img}
@@ -322,7 +324,7 @@ const styles = StyleSheet.create({
     },
     noticeNum : {
         height : 30,
-        backgroundColor : Config.appColor,
+        backgroundColor : '#aaa',
         paddingLeft : 20,
         justifyContent : 'center',
     },

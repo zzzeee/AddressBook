@@ -97,15 +97,11 @@ export default class LoginPage extends Component {
             //console.log(result);
             if(result)
             {
-                if(result.err)
-                {
+                if(result.err) {
                     alert(result.msg ? result.msg : '帐号/密码不正确');
-                }
-                else
-                {
+                } else {
                     AsyncStorage.setItem(Config.storageKey, JSON.stringify(result), function(err){
-                        if(!err && result)
-                        {
+                        if(!err && result) {
                             that.props.callback(result);
                         }
                     });
@@ -159,7 +155,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
     },
     loginButton : {
-        backgroundColor : '#19668c',
+        backgroundColor : '#058075',
         width : Util.size.width * 0.8,
         borderWidth : Util.pixel,
         borderColor : '#5fd3e0'

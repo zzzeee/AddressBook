@@ -42,11 +42,12 @@ export default class About extends Component {
   	}
 
     componentDidMount() {
-        
-    }
 
+    }
+    
     componentWillMount() {
         let that = this;
+        
         AsyncStorage.getItem(Config.storageKey, function(err, result){
             if(!err && result) {
                 that.setState({userInfoLocal : JSON.parse(result)});
@@ -89,6 +90,9 @@ export default class About extends Component {
 
     //跳转管理
     rendNavigator = (route, navigator) => {
+        if(!this.user_id) {
+            return null;
+        }
         GoToPageObj.now_page = route.id;
 		GoToPageObj.now_title = route.title;
         this._route = route;
@@ -108,6 +112,7 @@ export default class About extends Component {
 				return <UserList 
                         route={route} 
                         nav={navigator} 
+                         appColor={Config.appColor}
                         obj={{
                             search : JSON.stringify(route.search),
                             sort : 'UserName',
@@ -142,9 +147,10 @@ export default class About extends Component {
         let return_pre = (GoToPageObj.hasOwnProperty('pre_index') && GoToPageObj.pre_page) ? true : false;
         let isreturn = route.returnId || return_pre ? true : false;
         let title = route.title ? route.title : this.props.title;
+        //alert('about' + this.props.appColor);
         return (
             <View style={styles.flex}>
-                <TopTitle  title={title} showReturn={isreturn} onPress={()=>{
+                <TopTitle  title={title} appColor={Config.appColor} showReturn={isreturn} onPress={()=>{
                     if(route.returnId){
                         navigator.push({
                             id : route.returnId,
@@ -176,13 +182,27 @@ export default class About extends Component {
                                 route={route} 
                                 uid={this.user_id} 
                                 userinfo={this.state.userInfoLocal} 
+                                appColor={Config.appColor}
                                 noticeNum={this.state.datas ? this.state.datas.length : 0} 
                             />;
                         }}
                     />
                 </View>
-                <View style={styles.viewMySelfInfo}>
-                </View>
+                {(this.user_id && this.state.userInfoLocal && this.user_id != this.state.userInfoLocal._id) ?
+                    <View style={styles.viewMySelfInfo} >
+                        <TouchableHighlight onPress={()=>{
+                            this.user_id = this.state.userInfoLocal._id;
+                            navigator.push({
+                                id : 'main',
+                                title : '个人中心',
+                            });
+                        }}>
+                            <Text style={styles.viewMySelfInfoText}>Me</Text>
+                        </TouchableHighlight>
+                    </View>
+                    : null
+                }
+                
             </View>
         );
     };
@@ -212,7 +232,7 @@ export default class About extends Component {
 				}}
 			>
 			<View key={rowID} style={styles.oneNotice}>
-				<View style={styles.userFristView}>
+				<View style={[styles.userFristView, this.props.appColor ? {backgroundColor: this.props.appColor} : {}]}>
 					<Text style={styles.userFristText}>{notice.Department.substring(0, 1)}</Text>
 				</View>
 				<View style={styles.contentBox}>
@@ -388,4 +408,19 @@ const styles = StyleSheet.create({
 		color : '#fff',
 		fontSize : 10,
 	},
+    viewMySelfInfo : {
+        width : 30,
+        height : 30,
+        borderRadius : 15,
+        position : 'absolute',
+        top : 45,
+        right : 5,
+        backgroundColor : 'rgba(190, 48, 95, 0.8)',
+        justifyContent : 'center',
+        alignItems : 'center',
+    },
+    viewMySelfInfoText : {
+        fontStyle : 'italic',
+        color : '#fff',
+    }
 });

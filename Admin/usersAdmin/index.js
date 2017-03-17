@@ -650,15 +650,12 @@ app.post('/check_user_login', urlencodedParser, function (req, res) {
 		Users.findOne(obj, function(err, result){
 			if(!err)
 			{
-				if(result)
-				{
+				if(result) {
 					res.send(result);
-				}
-				else
-				{
+				} else {
 					res.send({
 						err : 1,
-						msg : 'error: 帐号或密码不正确'
+						msg : '帐号或密码不正确'
 					});
 				}
 			}
@@ -668,7 +665,7 @@ app.post('/check_user_login', urlencodedParser, function (req, res) {
 	{
 		res.send({
 			err : 2,
-			msg : 'error: 帐号或密码为空'
+			msg : ' 帐号或密码为空'
 		});
 	}
 });

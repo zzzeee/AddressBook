@@ -32,7 +32,7 @@ export default class NoticeDetails extends Component {
 		return (
 			<View style={styles.flex}>
 				<View>
-					<TopTitle  title={route.title} showReturn={true} 
+					<TopTitle  title={route.title} showReturn={true} appColor={Config.appColor}
 						onPress={() => {
 							let obj = {id : 'main', title : retitle};
 							if(route.search) obj.search = route.search;
