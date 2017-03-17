@@ -7,10 +7,10 @@ import {
 	ScrollView,
     TouchableHighlight,
     AsyncStorage,
-    Modal,
 } from 'react-native';
 
 import Button from '../public/Button';
+import LoadAnimated from '../public/LoadAnimated';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
@@ -106,16 +106,7 @@ export default class SelectTheme extends Component {
                 <ScrollView contentContainerStyle={styles.menuBox}>
                     {this.themes.map((obj, i) => this.renderItem(obj, i))}
                 </ScrollView>
-                <Modal
-                    animationType={"fade"}
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => {}}
-                >
-					<View style={styles.modalBody}>
-						<Text style={styles.modalText}>正在更换中 ..</Text>
-					</View>
-				</Modal>
+                <LoadAnimated modalVisible={this.state.modalVisible} />
             </View>
   		);
 	}
@@ -197,19 +188,5 @@ const styles = StyleSheet.create({
 		paddingLeft : 10,
 		paddingRight: 10,
 		fontSize : 16,
-	},
-    modalBody : {
-		flex : 1,
-		alignItems: 'center',
-        justifyContent: 'center',
-	},
-	modalText : {
-		color : '#fff',
-		padding : 30,
-		borderRadius : 18,
-        fontSize : 16,
-        borderWidth : 2,
-        borderColor : '#aaa',
-		backgroundColor : 'rgba(0, 0, 0, 0.92)',
 	},
 });

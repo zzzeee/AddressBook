@@ -15,7 +15,7 @@ import InputText from '../public/InputText';
 var Util = require('../public/Util');
 var Config = require('../public/Config');
 
-export default class DepUsers extends Component {
+export default class UserList extends Component {
 
 	//构造
   	constructor(props)
@@ -96,12 +96,9 @@ export default class DepUsers extends Component {
 				<View style={styles.userNameView}>
 					<TouchableHighlight underlayColor='transparent' style={styles.flex} onPress={()=>{
 						if(obj._id){
-							if(this.props.viewUser)
-							{
+							if(this.props.viewUser) {
 								this.props.viewUser(obj._id);
-							}
-							else
-							{
+							}else {
 								GoToPageObj.uid = obj._id;
 								GoToPageObj.index = 3;
 								GoToPageObj.pre_page = GoToPageObj.now_page;

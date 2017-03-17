@@ -8,7 +8,6 @@ import {
 	ScrollView,
 	Switch,
 	Image,
-	Modal,
 } from 'react-native';
 
 import Button from '../public/Button';
@@ -18,6 +17,7 @@ import Toast from 'react-native-root-toast';
 import DatePicker from 'react-native-datepicker';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import LoadAnimated from '../public/LoadAnimated';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
@@ -110,16 +110,7 @@ export default class EditUser extends Component {
 		let disEdit = (uid == this.state.localUserId) ? false : true;
   		return (
 			<View style={styles.flex}>
-				<Modal
-                    animationType={"none"}
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => {}}
-                >
-					<View style={styles.modalBody}>
-						<Text style={styles.modalText}>正在更新中 ..</Text>
-					</View>
-				</Modal>
+				<LoadAnimated modalVisible={this.state.modalVisible} />
 				<TopTitle  title={route.title} showReturn={true} appColor={Config.appColor} onPress={()=>{
 					this.toast && Toast.hide(this.toast);
 					let obj = {id : route.returnId, title : route.returnTitle};
@@ -444,20 +435,6 @@ const styles = StyleSheet.create({
         letterSpacing : 5,
         fontStyle : 'italic',
     },
-	modalBody : {
-		flex : 1,
-		alignItems: 'center',
-        justifyContent: 'center',
-	},
-	modalText : {
-		color : '#fff',
-		padding : 30,
-		borderRadius : 18,
-        fontSize : 16,
-        borderWidth : 2,
-        borderColor : '#aaa',
-		backgroundColor : 'rgba(0, 0, 0, 0.92)',
-	},
 	headView : {
 		height : 80,
 		flexDirection : 'row',
