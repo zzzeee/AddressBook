@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
 	},
 	inputStyle : {
 		flex : 1,
+		minHeight: 200,
 		borderWidth : 1,
 		borderColor : '#aaa',
 		borderRadius: 8,

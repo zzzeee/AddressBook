@@ -7,6 +7,7 @@ import {
 	TouchableHighlight,
 	ListView,
 	ScrollView,
+	RefreshControl,
 } from 'react-native';
 
 import TopTitle from '../public/TopTitle';
@@ -24,6 +25,7 @@ export default class About extends Component {
       	this.state = {
       		showLoad : true,
       		datas : null,
+			isRefreshing : false,
       		dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       	};
 		
@@ -76,6 +78,7 @@ export default class About extends Component {
         	var ret = result || [];
             that.setState({
             	datas : ret,
+				isRefreshing : false,
             	dataSource: that.state.dataSource.cloneWithRows(ret)
             });
         });
@@ -111,6 +114,7 @@ export default class About extends Component {
 					        dataSource={this.state.dataSource} 
 					        renderRow={this.renderNotice.bind(this)}
 					        enableEmptySections={true}	//允许空数据
+							refreshControl={this._refreshControl()}
 				        /> :
 				        <View style={styles.noResult}>
 				        	<Text style={styles.noResultText}>无公告列表</Text>
@@ -119,6 +123,26 @@ export default class About extends Component {
 				</View>
 			</View>
 		);
+	};
+
+	//刷新列表
+	_refreshControl = () => {
+		return (
+			<RefreshControl
+				refreshing={this.state.isRefreshing}
+				onRefresh={this._onRefresh}
+				tintColor="#ff0000"
+				colors={[this.props.appColor]}
+				progressBackgroundColor="#fff"
+           />
+		);
+	};
+
+	//刷新事件
+	_onRefresh = () => {
+		let that = this;
+		this.setState({isRefreshing: true});
+		that.getNoticeList(that.searchTxt);
 	};
 
 	//单条公告
@@ -138,7 +162,7 @@ export default class About extends Component {
 				}}
 			>
 			<View key={rowID} style={styles.oneNotice}>
-				<View style={[styles.userFristView, this.props.appColor ? {backgroundColor: this.props.appColor} : {}]}>
+				<View style={[styles.userFristView, {backgroundColor: this.props.appColor}]}>
 					<Text style={styles.userFristText}>{obj.Department.substring(0, 1)}</Text>
 				</View>
 				<View style={styles.contentBox}>

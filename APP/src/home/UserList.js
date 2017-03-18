@@ -7,6 +7,7 @@ import {
 	ListView,
 	TextInput,
 	Linking,
+	RefreshControl,
 } from 'react-native';
 
 import TopTitle from '../public/TopTitle';
@@ -23,6 +24,8 @@ export default class UserList extends Component {
       	super(props);
       	this.state = {
       		searchTxt : null,
+			queryObj : {},
+			isRefreshing : false,
       		dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       	};
 
@@ -76,6 +79,7 @@ export default class UserList extends Component {
 					        dataSource={this.state.dataSource} 
 					        renderRow={this.renderUser.bind(this)}
 					        enableEmptySections={true}	//允许空数据
+							refreshControl={this._refreshControl()}
 				        /> :
 				        <View style={styles.noResult}>
 				        	<Text style={styles.noResultText}>未搜索到员工</Text>
@@ -133,6 +137,26 @@ export default class UserList extends Component {
 		);
 	};
 
+	//刷新列表
+	_refreshControl = () => {
+		return (
+			<RefreshControl
+				refreshing={this.state.isRefreshing}
+				onRefresh={this._onRefresh}
+				tintColor="#ff0000"
+				colors={[this.props.appColor]}
+				progressBackgroundColor="#fff"
+           />
+		);
+	};
+
+	//刷新事件
+	_onRefresh = () => {
+		let that = this;
+		this.setState({isRefreshing: true});
+		that.queryUserList(that.state.queryObj);
+	};
+
 	//获取指定条件的员工列表
 	queryUserList = (obj) => {
 		let that = this;
@@ -148,6 +172,8 @@ export default class UserList extends Component {
             	alert(error);
             }else{
             	that.setState({
+					queryObj : obj,
+					isRefreshing : false,
 		 			dataSource: that.state.dataSource.cloneWithRows(lists),
 				});
             }

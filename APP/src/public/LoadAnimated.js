@@ -47,7 +47,7 @@ export default class LoadAnimated extends React.Component {
         >
             <View style={styles.centerBox}>
                 <View style={styles.modalBody}>
-                    <Text style={styles.modalText}>正在更换中</Text>
+                    <Text style={styles.modalText}>正在加载</Text>
                     <Animated.Image 
                         source={require('../../images/loading.png')}
                         style={{
@@ -88,6 +88,6 @@ var styles = StyleSheet.create({
 	modalText : {
 		color : '#fff',
         fontSize : 16,
-        paddingRight: 10,
+        paddingRight: 20,
 	},
 });
