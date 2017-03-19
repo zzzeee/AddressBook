@@ -109,7 +109,7 @@ export default class APP extends Component {
                 {this.state.showLogin === null ?
                     null :
                     (this.state.showLogin ?
-                        <LoginPage callback={(uinfo)=>{
+                        <LoginPage appColor={Config.appColor} callback={(uinfo)=>{
                             this.setState({
                                 showLogin : false,
                                 selectIndex : 0,

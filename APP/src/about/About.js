@@ -11,6 +11,7 @@ import {
     Image,
     ScrollView,
     Linking,
+    Animated,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -34,8 +35,10 @@ export default class About extends Component {
             userInfoQuery : null,
       		userInfoLocal : null,
             dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
+            heightValue: new Animated.Value(0),
       	};
        
+        this.timer = null;
         this.user_id = null;
         this._route = {};
         this._navigator = {};
@@ -53,6 +56,10 @@ export default class About extends Component {
                 that.setState({userInfoLocal : JSON.parse(result)});
             }
         });
+    }
+
+    componentWillUnmount() {
+        this.timer && clearTimeout(this.timer);
     }
 
     initData = (uid) => {
@@ -186,6 +193,19 @@ export default class About extends Component {
                                 noticeNum={this.state.datas ? this.state.datas.length : 0} 
                             />;
                         }}
+                        onScroll={this._onScroll.bind(this)}
+                        renderFooter={()=>{
+                            return (
+                                <Animated.View style={{
+                                    height : this.state.heightValue,
+                                    justifyContent : 'center',
+                                    alignItems : 'center',
+                                    backgroundColor : '#ddd',
+                                }}>
+                                    <Text>已经到达底部</Text>
+                                </Animated.View>
+                            );
+                        }}
                     />
                 </View>
                 {(this.user_id && this.state.userInfoLocal && this.user_id != this.state.userInfoLocal._id) ?
@@ -205,6 +225,26 @@ export default class About extends Component {
                 
             </View>
         );
+    };
+
+    //滚动至底部事件
+    _onScroll = (event) => {
+        if(this.state.heightValue > 0) return;
+        let that = this;
+        let y = event.nativeEvent.contentOffset.y;
+        let h = event.nativeEvent.layoutMeasurement.height;
+        let bodyH = event.nativeEvent.contentSize.height;
+
+        if(y + h > bodyH + 30) {
+            that.state.heightValue.setValue(50);
+            
+            that.timer = setTimeout(() => { 
+                Animated.timing(that.state.heightValue, {
+                    toValue: 0,
+                    duration: 200,
+                }).start();
+            }, 1800);
+        }
     };
 
     //单条公告
@@ -422,5 +462,11 @@ const styles = StyleSheet.create({
     viewMySelfInfoText : {
         fontStyle : 'italic',
         color : '#fff',
-    }
+    },
+    loadMoreView : {
+        height : 40,
+        justifyContent : 'center',
+        alignItems : 'center',
+        backgroundColor : '#ddd',
+    },
 });

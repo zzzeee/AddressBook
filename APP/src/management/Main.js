@@ -30,6 +30,9 @@ export default class Main extends Component {
         AsyncStorage.getItem(Config.storageKey, function(err, result){
             if(!err && result) {
                 that.userInfo = JSON.parse(result);
+				that.setState({
+					userInfo : JSON.parse(result)
+				});
             }
         });
   	}
@@ -38,7 +41,7 @@ export default class Main extends Component {
   		let that = this;
   		let {route, nav} = this.props;
 
-  		if(this.state.userInfo || true) {
+  		if(this.state.userInfo && this.state.userInfo._id) {
   			return (
   				<View style={styles.bodyBox}>
   					<View>
@@ -46,7 +49,7 @@ export default class Main extends Component {
   							nav.push({
   								title : '修改密码', 
   								id : 'management_pwd',
-  								username : this.userInfo.UserName,
+  								uid : this.userInfo._id,
   							});
   						})}
 

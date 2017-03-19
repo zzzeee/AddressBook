@@ -29,14 +29,15 @@ export default class Management extends Component {
       		showLoad : true,
       		userInfo : null,
       	};
-      	this.userInfo = {};
+          
+        this.pageContent = this.pageContent.bind(this);
   	}
 
   	componentWillMount() {
   		let that = this;
         AsyncStorage.getItem(Config.storageKey, function(err, result){
             if(!err && result) {
-                that.userInfo = JSON.parse(result);
+                that.setState({userInfo : JSON.parse(result)})
             }
         });
   	}
@@ -90,7 +91,7 @@ export default class Management extends Component {
                         nav.push({title:'管理', id:'main'});
                     }}
                 />
-                {body}
+                {(this.state.userInfo && this.state.userInfo._id) ? body : null}
             </View>
         );
     };

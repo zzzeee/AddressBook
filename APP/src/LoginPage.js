@@ -31,45 +31,38 @@ export default class LoginPage extends Component {
 
 	render() {
         return (
-        <View style={styles.loginBody}>
+        <View style={[styles.loginBody, {backgroundColor: this.props.appColor}]}>
             <StatusBar
-                backgroundColor={Config.appColor}
+                backgroundColor={this.props.appColor}
                 barStyle="light-content"
             />
-            
-            <Image
-                source={require('../images/login-bg.jpg')} 
-                resizeMode={Image.resizeMode.stretch}
-                style={styles.loginBodyImg}
-            >
-                <View style={styles.logoBox}>
-                    <Image 
-                        source={require('../images/jtlogofff.png')} 
-                        style={styles.loginLogo}
-                    />
-                    <View style={styles.inputBox}>
-                        <View style={styles.inputItem}>
-                            <View style={styles.iconBox}>
-                                <Icon name={'ios-person'} size={30} color={'#888'}/>
-                            </View>
-                            <View style={styles.inputView}>
-                                <InputText pText='用户名或手机' onChange={(txt)=>this.user = txt} isPWD={false} length={30} />
-                            </View>
+            <View style={styles.logoBox}>
+                <Image 
+                    source={require('../images/jtlogofff.png')} 
+                    style={styles.loginLogo}
+                />
+                <View style={styles.inputBox}>
+                    <View style={styles.inputItem}>
+                        <View style={styles.iconBox}>
+                            <Icon name={'ios-person'} size={30} color={'#888'}/>
                         </View>
-                        <View style={styles.inputItem}>
-                            <View style={styles.iconBox}>
-                                <Icon name={'md-lock'} size={30} color={'#888'}/>
-                            </View>
-                            <View style={styles.inputView}>
-                                <InputText pText='密码' onChange={(txt)=>this.pwd = txt} isPWD={true} length={20} />
-                            </View>
+                        <View style={styles.inputView}>
+                            <InputText pText='用户名或手机' onChange={(txt)=>this.user = txt} isPWD={false} length={30} />
+                        </View>
+                    </View>
+                    <View style={styles.inputItem}>
+                        <View style={styles.iconBox}>
+                            <Icon name={'md-lock'} size={30} color={'#888'}/>
+                        </View>
+                        <View style={styles.inputView}>
+                            <InputText pText='密码' onChange={(txt)=>this.pwd = txt} isPWD={true} length={20} />
                         </View>
                     </View>
                 </View>
-                <View>
-                    <Button text='登 录' style={styles.loginButton}  onPress={this.checkLogin} />
-                </View>
-            </Image>
+            </View>
+            <View style={styles.loginButtonView}>
+                <Button text='登 录' style={styles.loginButton} onPress={this.checkLogin} />
+            </View>
         </View>
         );
     }
@@ -115,13 +108,8 @@ var styles = StyleSheet.create({
 	loginBody : {
         flex : 1,
         backgroundColor : '#3A98E2',
-    },
-    loginBodyImg : {
-        width : Util.size.width,
-        height: Util.size.height,
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingBottom : 60,
     },
     logoBox : {
         alignItems : 'center',
@@ -152,6 +140,11 @@ var styles = StyleSheet.create({
     },
     inputView : {
         flex : 7,
+        justifyContent: 'center',
+    },
+    loginButtonView : {
+        flex : 1,
+        alignItems: 'center',
         justifyContent: 'center',
     },
     loginButton : {

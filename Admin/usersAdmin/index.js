@@ -455,29 +455,25 @@ app.get('/reductionUserPwd', function(req, res) {
 
 //修改员工登录密码
 app.get('/changeUserPwd', function(req, res) {
-	var user = req.query.username || '';
+	var userid = req.query.uid || '';
 	var pwd = req.query.userpwd || '';
 	var npwd = req.query.usernewpwd || '';
-
-	if(user && pwd && npwd){
+	
+	if(userid && pwd && npwd){
 		pwd = md5(pwd);
 		npwd = md5(npwd);
 
-		Users.update({
-			UserName : user,
-			Pwd : pwd
-		}, {$set : {
+		Users.findByIdAndUpdate(userid, {$set : {
 			Pwd : npwd
 		}}, function(error, result) {
 			if(error){
 				res.send({err : 1, msg : error});
 			}else{
-				if(result && result.ok && result.n){
+				if(result){
 					res.send({err : 0, msg : '修改成功'});
 				}else{
 					res.send({err : 2, msg : '旧密码错误'});
 				}
-				
 			}
 		});
 	}else{

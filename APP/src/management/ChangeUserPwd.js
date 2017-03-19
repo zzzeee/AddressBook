@@ -23,7 +23,7 @@ export default class ChangeUserPwd extends Component {
       		reload : false,
       	};
 
-      	this.username = '';
+      	this.uid = '';
       	this.opwd = '';
       	this.npwd = '';
       	this.npwd2 = '';
@@ -31,7 +31,7 @@ export default class ChangeUserPwd extends Component {
 
   	componentDidMount() {
   		let {route} = this.props;
-  		this.username = route.username;
+  		this.uid = route.uid;
   	}
 
   	render() {
@@ -51,62 +51,44 @@ export default class ChangeUserPwd extends Component {
 			
 				<View style={styles.inputView}>
 					<Button text='确 定' style={{backgroundColor : Config.appColor}} onPress={()=>{
-						if(!this.opwd)
-						{
+						if(!this.opwd){
 							alert('未输入旧密码');
 							return false;
-						}
-						else if(!this.npwd)
-						{
+						}else if(!this.npwd) {
 							alert('未输入新密码');
 							return false;
-						}
-						else if(!this.npwd2)
-						{
+						}else if(!this.npwd2) {
 							alert('未输入确认密码');
 							return false;
-						}
-						else if(this.npwd != this.npwd2)
-						{
+						}else if(this.npwd != this.npwd2) {
 							alert('新密码与确认密码不一致');
 							return false;
-						}
-						else if(this.npwd.length < 6)
-						{
+						}else if(this.npwd.length < 6) {
 							alert('密码不能低于6位');
 							return false;
-						}
-						else if(this.npwd == this.opwd)
-						{
+						}else if(this.npwd == this.opwd) {
 							alert('新密码不能与旧密码一样');
 							return false;
-						}
-						else if(!this.username)
-						{
+						}else if(!this.uid) {
 							alert('未获取到用户信息');
 							return false;
-						}
-						else
-						{
+						}else {
 							let url = Config.host + Config.changePwd;
 							let that = this;
 							Util.fetch(url, 'get', {
-								username : this.username,
+								uid : this.uid,
 								userpwd : this.opwd,
 								usernewpwd : this.npwd,
 					        }, function(result){
 					            if(result)
 					            {
-					            	if(result.err === 0)
-					            	{
+					            	if(result.err === 0){
 					            		alert('密码修改成功');
 					            		that.opwd = '';
 					            		that.npwd = '';
 					            		that.npwd2 = '';
 					            		that.props.logout();
-					            	}
-					            	else
-					            	{
+					            	}else {
 					            		alert(result.msg);
 					            	}
 					            }

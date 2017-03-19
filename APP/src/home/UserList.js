@@ -8,6 +8,7 @@ import {
 	TextInput,
 	Linking,
 	RefreshControl,
+	Animated,
 } from 'react-native';
 
 import TopTitle from '../public/TopTitle';
@@ -26,6 +27,7 @@ export default class UserList extends Component {
       		searchTxt : null,
 			queryObj : {},
 			isRefreshing : false,
+			heightValue: new Animated.Value(0),
       		dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       	};
 
@@ -80,6 +82,19 @@ export default class UserList extends Component {
 					        renderRow={this.renderUser.bind(this)}
 					        enableEmptySections={true}	//允许空数据
 							refreshControl={this._refreshControl()}
+							onScroll={this._onScroll.bind(this)}
+							renderFooter={()=>{
+								return (
+									<Animated.View style={{
+										height : this.state.heightValue,
+										justifyContent : 'center',
+										alignItems : 'center',
+										backgroundColor : '#ddd',
+									}}>
+										<Text>已经到达底部</Text>
+									</Animated.View>
+								);
+							}}
 				        /> :
 				        <View style={styles.noResult}>
 				        	<Text style={styles.noResultText}>未搜索到员工</Text>
@@ -156,6 +171,26 @@ export default class UserList extends Component {
 		this.setState({isRefreshing: true});
 		that.queryUserList(that.state.queryObj);
 	};
+
+	//滚动至底部事件
+    _onScroll = (event) => {
+        if(this.state.heightValue > 0) return;
+        let that = this;
+        let y = event.nativeEvent.contentOffset.y;
+        let h = event.nativeEvent.layoutMeasurement.height;
+        let bodyH = event.nativeEvent.contentSize.height;
+
+        if(y + h > bodyH + 30) {
+            that.state.heightValue.setValue(50);
+            
+            that.timer = setTimeout(() => { 
+                Animated.timing(that.state.heightValue, {
+                    toValue: 0,
+                    duration: 300,
+                }).start();
+            }, 1800);
+        }
+    };
 
 	//获取指定条件的员工列表
 	queryUserList = (obj) => {
