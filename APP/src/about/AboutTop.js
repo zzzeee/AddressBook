@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 var Util = require('../public/Util');
 var Config = require('../public/Config');
 
-export default class About extends Component {
+export default class AboutTop extends Component {
 	//构造
   	constructor(props)
   	{
