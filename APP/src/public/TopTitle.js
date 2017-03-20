@@ -20,7 +20,7 @@ export default class TopTitle extends Component {
   	}
 
 	render() {
-		let {title, onPress, showReturn} = this.props;
+		let {title, onPress, showReturn, sideRight} = this.props;
 		
 	    return (
 	    	<View style={[styles.topBox, this.props.appColor ? {backgroundColor: this.props.appColor} : {}]}>
@@ -35,7 +35,8 @@ export default class TopTitle extends Component {
 	    		<View style={styles.middleBox}>
 	    			<Text style={styles.title}>{title}</Text>
 	    		</View>
-	    		<View style={styles.sideBox}>
+	    		<View style={[styles.sideBox, {paddingBottom: 6}]}>
+					{sideRight ? sideRight : null}
 	    		</View>
 			</View>
 	    );

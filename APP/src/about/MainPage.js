@@ -12,6 +12,7 @@ import {
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Toast from 'react-native-root-toast';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
@@ -27,6 +28,7 @@ export default class MainPage extends Component {
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
         };
 
+        this.btnisOK = true;
         this.timer = null;
         this.user_id = null;
         this.local_id = null;
@@ -75,14 +77,20 @@ export default class MainPage extends Component {
 
         const {onScroll = () => {}} = this.props;
         let isSelf = this.user_id == this.local_id ? true : false;
+        let isFollow = this.isFollow();
         let img = userinfo.HeadImg ? {uri: Config.host + '/images/' + userinfo.HeadImg} : require('../../images/head.jpeg');
+        let userNameText = (
+            <Text style={styles.nameText}>
+                {userinfo.Department}
+                <Text style={{fontSize: 10}}> ● </Text>
+                {userinfo.Name}
+            </Text>
+        );
         let userName = (
             <TouchableHighlight underlayColor='transparent' onPress={()=>this.linkViewEditInfo(isSelf)}>
                 <View style={styles.nameView}>
-                    <Text style={styles.nameText}>
-                        {userinfo.Department + ' ● ' + userinfo.Name}
-                    </Text>
-                    <Icon name={isSelf ? 'edit' : 'search'} size={14} color='#fff' backgroundColor='rgba(0, 0, 0, 0.2)' />
+                    {userNameText}
+                    <Icon name={isSelf ? 'edit' : 'search'} size={14} color='#fff' />
                 </View>
             </TouchableHighlight>
         );
@@ -111,6 +119,19 @@ export default class MainPage extends Component {
                         )}
                         renderForeground={() => (
                             <View key="parallax-header" style={styles.parallaxHeader}>
+                                <View style={styles.heartView}>
+                                    {isSelf ? 
+                                        null :
+                                         <Icon.Button 
+                                            name="heart" 
+                                            onPress={this.followToggle} 
+                                            size={20}
+                                            iconStyle={{marginRight: 0}} 
+                                            backgroundColor='transparent'
+                                            color={isFollow ? '#D2D251' : '#999'} 
+                                         />
+                                    }
+                                </View>
                                 <TouchableHighlight underlayColor='transparent' onPress={()=>this.linkViewEditInfo(isSelf)}>
                                     <Image 
                                         source={img}
@@ -122,9 +143,7 @@ export default class MainPage extends Component {
                         )}
                         renderStickyHeader={() => (
                             <View key="sticky-header" style={[styles.stickySection, {backgroundColor: this.props.appColor}]}>
-                                <Text style={styles.nameText}>
-                                    {userinfo.Department + ' ● ' + userinfo.Name}
-                                </Text>
+                                {userNameText}
                             </View>
                         )}
                     />
@@ -145,6 +164,58 @@ export default class MainPage extends Component {
                 }}
             />
         );
+    };
+
+    //判断是否关注
+    isFollow = () => {
+        let _isFollow = false;      
+        for(let u of this.state.userInfoQuery.Fans) {
+            if(u == this.local_id) {
+                _isFollow = true;
+                break;
+            }
+        }
+        return _isFollow;
+    };
+
+    //更新关注 已关注->取消， 未关注->关注
+    followToggle = () => {
+        let _uid = this.local_id || null;
+        let _fid = this.user_id || null;
+        //alert(_uid + '--' + _fid);
+        
+        // btnisOK防止禁止频繁点击
+        if(_fid && _uid && _fid != _uid && this.btnisOK) {
+            let that = this;
+            let url = Config.host + Config.followToggle;
+           
+            Util.fetch(url, 'get', {
+                isFollow : this.isFollow() ? 1 : 0,
+                uid : _uid,
+                fid : _fid,
+            }, function(result){
+                if(result && result.msg) {
+                    //alert(result.msg);
+                    // Add a Toast on screen.
+                    let toast = Toast.show(result.msg, {
+                        duration: 3000,
+                        position: Toast.positions.CENTER,
+                        hideOnPress: true,
+                    });
+                    
+                    that.btnisOK = false;
+                    that.timer = setTimeout(() => { 
+                        that.btnisOK = true;
+                    }, 3000);
+
+                    if(result && result.uinfo && result.err === 0) {
+                        that.setState({
+                            userInfoQuery : result.uinfo
+                        });
+                    }
+                }
+            });
+        }
     };
 
     // 跳转到查看编辑用户信息页面
@@ -219,7 +290,7 @@ export default class MainPage extends Component {
 
 
 const AVATAR_SIZE = 80;
-const PARALLAX_HEADER_HEIGHT = 200;
+const PARALLAX_HEADER_HEIGHT = 240;
 const STICKY_HEADER_HEIGHT = 40;
 
 const styles = StyleSheet.create({
@@ -236,11 +307,8 @@ const styles = StyleSheet.create({
         letterSpacing: 5,
         fontStyle: 'italic',
     },
-    topView: {
-        height: 330,
-    },
     topImgView: {
-        height: 200,
+        height: PARALLAX_HEADER_HEIGHT,
         width: Util.size.width,
     },
     nameView: {
@@ -250,7 +318,7 @@ const styles = StyleSheet.create({
     nameText: {
         color: '#eee',
         fontSize: 15,
-        //fontWeight : 'bold',
+        alignItems: 'center',
         paddingRight: 10,
     },
     btnBoxView: {
@@ -387,11 +455,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     parallaxHeader: {
-        alignItems: 'center',
         flex: 1,
+        alignItems: 'center',
         flexDirection: 'column',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         paddingBottom : 10,
+    },
+    heartView: {
+        flex : 1,
+        width: Util.size.width,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+        paddingRight: 20,
+        paddingTop: 20,
     },
     avatar: {
         width: AVATAR_SIZE,
