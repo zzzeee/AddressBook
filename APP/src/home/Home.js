@@ -41,9 +41,9 @@ export default class Home extends Component {
   	{
       	super(props);
       	this.state = {
+			datas : [],
       		showLoad : true,
 			fetchError : null,
-      		datas : [],
       	};
 
 		this.fetchQueryData = {};
@@ -55,8 +55,7 @@ export default class Home extends Component {
 		//自定义网络请求超时事件
 		let that = this;
 		Util.fetchError = (err, obj) => {
-			if(err)
-			{
+			if(err) {
 				that.fetchQueryData = obj ? obj : {};
 				that.setState({
 					fetchError : err,
@@ -70,8 +69,7 @@ export default class Home extends Component {
 		return (this.state.fetchError ?
 			<View style={styles.centerBox}>
 				<Button style={styles.refaceBtn} textStyle={styles.refaceBtnText} text="点击重新连接" onPress={()=>{
-					if(this.fetchQueryData.u && this.fetchQueryData.t)
-					{
+					if(this.fetchQueryData.u && this.fetchQueryData.t) {
 						Util.fetch(this.fetchQueryData.u, this.fetchQueryData.t, this.fetchQueryData.o, this.fetchQueryData.c);
 					}
 				}} />
@@ -149,8 +147,7 @@ export default class Home extends Component {
 
 		Util.fetch(url, 'get', {
         }, function(result){
-        	if(result)
-        	{
+        	if(result) {
         		that.setState({
 	            	showLoad : false,
 	            	datas : result,

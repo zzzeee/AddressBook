@@ -11,6 +11,7 @@ var Config = {
 	addNotice: '/addNotice',				//添加公告
 	followToggle: '/followToggle',			//添加关注或取消关注
 	userNotices : '/getNoticesByUserId', 	//获取所有发布者的公告
+	userAllInfo : '/getUserAllInfo',		//获取员工的所有信息(公告和个人)
 
 	/* -------------全局样式-start---------- */
 	//本地存储标记字符

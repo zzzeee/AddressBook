@@ -44,8 +44,7 @@ export default class AboutTop extends Component {
 
     initData = (uid) => {
         let that = this;
-        if(uid)
-        {
+        if(uid) {
             let url = Config.host + Config.getUserInfo;
             Util.fetch(url, 'get', {
                 action : 'edit',
@@ -199,10 +198,8 @@ export default class AboutTop extends Component {
     //判断是否关注
     isFollow = () => {
         let _isFollow = false;      
-        for(let u of this.state.userInfoQuery.Fans)
-        {
-            if(u == this.state.userInfoLocal._id)
-            {
+        for(let u of this.state.userInfoQuery.Fans) {
+            if(u == this.state.userInfoLocal._id) {
                 _isFollow = true;
                 break;
             }
@@ -215,8 +212,7 @@ export default class AboutTop extends Component {
         let _uid = this.state.userInfoLocal._id || null;
         let _fid = this.props.uid || null;
         //alert(_uid + '--' + _fid);
-        if(_fid && _uid && _fid != _uid)
-        {
+        if(_fid && _uid && _fid != _uid) {
             let that = this;
             let url = Config.host + Config.followToggle;
            
@@ -225,8 +221,7 @@ export default class AboutTop extends Component {
                 uid : _uid,
                 fid : _fid,
             }, function(result){
-                if(result && result.msg)
-                {
+                if(result && result.msg) {
                     //alert(result.msg);
                     // Add a Toast on screen.
                     let toast = Toast.show(result.msg, {
@@ -235,8 +230,7 @@ export default class AboutTop extends Component {
                         hideOnPress: true,
                     });
 
-                    if(result && result.uinfo && result.err === 0)
-                    {
+                    if(result && result.uinfo && result.err === 0) {
                         that.setState({
                             userInfoQuery : result.uinfo
                         });

@@ -14,10 +14,11 @@ import {
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 
-class Talks extends Component {
+export default class ParaView extends Component {
   constructor(props) {
     super(props);
     this.state =  {
+      ...props,
       dataSource: new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
       }).cloneWithRows([
@@ -39,18 +40,6 @@ class Talks extends Component {
   render() {
     const { onScroll = () => {} } = this.props;
     return (
-      <ListView
-        ref="ListView"
-        style={styles.container}
-        dataSource={ this.state.dataSource }
-        renderRow={(rowData) => (
-          <View key={rowData} style={ styles.row }>
-            <Text style={ styles.rowText }>
-              { rowData }
-            </Text>
-          </View>
-         )}
-        renderScrollComponent={props => (
           <ParallaxScrollView
             onScroll={onScroll}
 
@@ -61,7 +50,7 @@ class Talks extends Component {
 
             renderBackground={() => (
               <View key="background">
-                <Image source={require('./images/animated.jpg')} 
+                <Image source={require('../../images/animated.jpg')} 
                 style={{
                   width: window.width,
                   height: PARALLAX_HEADER_HEIGHT}}
@@ -78,7 +67,7 @@ class Talks extends Component {
               <View key="parallax-header" style={ styles.parallaxHeader }>
                 <Image style={[styles.avatar, {width: AVATAR_SIZE,
                   height: AVATAR_SIZE}]}
-                  source={require('./images/userbg.jpg')} 
+                  source={require('../../images/userbg.jpg')} 
                 />
                 <Text style={ styles.sectionSpeakerText }>
                   Talks by Rich Hickey
@@ -103,8 +92,6 @@ class Talks extends Component {
                 </Text>
               </View>
             )}/>
-        )}
-      />
     );
   }
 }
@@ -180,5 +167,3 @@ const styles = StyleSheet.create({
     fontSize: 20
   }
 });
-
-export default Talks;

@@ -484,8 +484,7 @@ app.get('/changeUserPwd', function(req, res) {
 //获取 部门，等级[，个人] 等信息
 app.get('/getBasicInfo', function(req, res) {
 	var action = req.query.action || '';
-	if(action == 'add' || action == 'edit')
-	{
+	if(action == 'add' || action == 'edit'){
 		var result = {};
 		var uid = req.query.uid || '';
 		result.lev = LEVEL;
@@ -495,29 +494,46 @@ app.get('/getBasicInfo', function(req, res) {
 				res.send(err);
 			}else{
 				result.dep = deps;
-				if(action == 'edit' && uid)
-				{
+				if(action == 'edit' && uid){
 					Users.findById(uid , function(err, user){
-						if(err)
-						{
+						if(err) {
 							res.send(err);
-						}
-						else
-						{
+						}else {
 							result.uinfo = user;
 							res.send(result);
 						}
 					});
-				}else
-				{
+				}else {
 					res.send(result);
 				}
 			}
 		});
-	}
-	else
-	{
+	}else {
 		res.sendStatus(404);
+	}
+});
+
+//获取员工的所有信息(公告和个人)
+app.get('/getUserAllInfo', function(req, res) {
+	var uid = req.query.uid || null;
+	var result = {};
+	
+	if(uid) {
+		Users.findById(uid , function(err, user){
+			if(err) {
+				res.send(err);
+			}else {
+				result.uinfo = user;
+				Notices.find({UserId: uid}, function(error, nolist) {
+					if(error){
+						res.send(error);
+					}else{
+						result.notices = nolist;
+						res.send(result);
+					}
+				}).sort({AddTime : -1});
+			}
+		});
 	}
 });
 
@@ -832,16 +848,13 @@ app.get('/followToggle', function(req, res) {
 					Users.findByIdAndUpdate(uid, {'$pull' : {'Concerns' : fid}}, function(error3, result3) {
 						if(!error3 && result3) {
 							Users.findById(fid, function(error5, result5) {
-								if(!error5 && result5)
-								{
+								if(!error5 && result5) {
 									res.send({
 										err : 0, 
 										msg : '取消关注成功',
 										uinfo : result5,
 									});
-								}
-								else
-								{
+								}else {
 									res.send({err : 3, msg : '查询取消关注后的信息失败'});
 								}
 							});

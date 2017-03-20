@@ -102,7 +102,7 @@ export default class APP extends Component {
     }
 
     render() {
-        if(!this.state.userInfo) return null;
+        if(!this.state.userInfo || !this.state.userInfo._id) return null;
 
         return (
             <View style={styles.flex}>
@@ -232,7 +232,8 @@ export default class APP extends Component {
                     title={this.returnTitle()} 
                     pageId={this.returnPage()}
                     appColor={Config.appColor}
-                    _id={this.return_id()} 
+                    user_id={this.return_id()}
+                    local_id={this.state.userInfo._id}
                     logout={this.userLogout}
                 />;
                 break;
