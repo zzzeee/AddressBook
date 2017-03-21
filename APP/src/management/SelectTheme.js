@@ -124,11 +124,10 @@ export default class SelectTheme extends Component {
                         this.setState({
                             modalVisible : true
                         }, () => {
-                            that.userInfo.appColor = obj.value;
                             let time2 = new Date().getTime();
                             t = (time2 - time) > t ? t : (t - (time2 - time));
                             that.timer = setTimeout(() => {
-                                AsyncStorage.setItem(Config.storageKey, JSON.stringify(that.userInfo), function(err) {
+                                AsyncStorage.setItem(Config.colorKey, obj.value, function(err) {
                                     if(!err) {
                                         that.setState({modalVisible : false}, () => {
                                             Config.appColor = obj.value;

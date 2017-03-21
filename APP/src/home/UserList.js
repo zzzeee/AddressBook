@@ -31,16 +31,40 @@ export default class UserList extends Component {
       		dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       	};
 
+		this.search_key = null;
+		this.search_val = null;
       	this.queryUserList = this.queryUserList.bind(this);
   	}
 
-  	componentWillMount() {
-  		this.queryUserList(this.props.obj);
+  	componentDidMount() {
+		if(this.props.queryList) {
+			let that = this;
+            let url = Config.host + Config.getUserInfo;
+            Util.fetch(url, 'get', {
+                uid: this.props.queryList.id,
+            }, function (result) {
+                if(result) {
+					that.search_key = that.props.queryList.key;
+					that.search_val = {_id : {'$in' : result[that.search_key]}};
+					
+					let obj = {
+						search: JSON.stringify(that.search_val),
+                        sort: 'UserName',
+                        order: 'ASC',
+					};
+					
+					that.queryUserList(obj);
+                }
+            });
+		}else {
+			this.queryUserList(this.props.obj);
+		}
   	}
 
 	//员工列表
 	render() {
         let {route, nav} = this.props;
+		if(this.search_val) route.search = this.search_val;
 		return (
 			<View style={styles.body}>
 				<View>

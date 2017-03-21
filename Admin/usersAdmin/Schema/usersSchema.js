@@ -33,7 +33,7 @@ var usersSchema = new mongoose.Schema({
 	EditTime : {type: String},						//编辑时间(时间戳)
 });
 
-usersSchema.statics.findLog = function(_where_, _sort_, _skip_, _limit_, callback){
+usersSchema.statics.findUsers = function(_where_, _sort_, _skip_, _limit_, callback){
 	return this.find(_where_)
 			.sort(_sort_)
 			.skip(_skip_)

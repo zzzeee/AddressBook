@@ -513,6 +513,19 @@ app.get('/getBasicInfo', function(req, res) {
 	}
 });
 
+//获取 部门，等级[，个人] 等信息
+app.get('/getUserInfo', function(req, res) {
+	var uid = req.query.uid || null;
+
+	if(uid){
+		Users.findById(uid , function(err, user){
+			if(!err && user) {
+				res.send(user);
+			}
+		});
+	}
+});
+
 //获取员工的所有信息(公告和个人)
 app.get('/getUserAllInfo', function(req, res) {
 	var uid = req.query.uid || null;
@@ -550,46 +563,26 @@ app.get('/queryUserList', function(req, res) {
 	search = Object.assign(search, {IsJob : true});
 	
 	//正则匹配，支持3级嵌套
-	if(isRegExp && typeof(search) == 'object')
-	{
-		for(var i in search)
-		{
-			if(typeof(search[i]) == 'object')
-			{
-				for(var i2 in search[i])
-				{
-					if(i2 == '$regex')
-					{
+	if(isRegExp && typeof(search) == 'object'){
+		for(var i in search){
+			if(typeof(search[i]) == 'object'){
+				for(var i2 in search[i]){
+					if(i2 == '$regex'){
 						search[i][i2] = new RegExp(search[i][i2], "i");
-					}
-					else
-					{
-						if(typeof(search[i][i2]) == 'object')
-						{
-							for(var i3 in search[i][i2])
-							{
-								if(i3 == '$regex')
-								{
+					}else {
+						if(typeof(search[i][i2]) == 'object'){
+							for(var i3 in search[i][i2]){
+								if(i3 == '$regex'){
 									search[i][i2][i3] = new RegExp(search[i][i2][i3], "i");
-								}
-								else
-								{
-									if(typeof(search[i][i2][i3]) == 'object')
-									{
-										for(var i4 in search[i][i2][i3])
-										{
-											if(i4 == '$regex')
-											{
+								}else {
+									if(typeof(search[i][i2][i3]) == 'object'){
+										for(var i4 in search[i][i2][i3]){
+											if(i4 == '$regex'){
 												search[i][i2][i3][i4] = new RegExp(search[i][i2][i3][i4], "i");
-											}
-											else
-											{
-												if(typeof(search[i][i2][i3][i4]) == 'object')
-												{
-													for(var i5 in search[i][i2][i3][i4])
-													{
-														if(i5 == '$regex')
-														{
+											}else {
+												if(typeof(search[i][i2][i3][i4]) == 'object'){
+													for(var i5 in search[i][i2][i3][i4]){
+														if(i5 == '$regex'){
 															search[i][i2][i3][i4][i5] = new RegExp(search[i][i2][i3][i4][i5], "i");
 														}
 													}
@@ -612,25 +605,20 @@ app.get('/queryUserList', function(req, res) {
 		error : null,
 	};
 
-	Users.findLog(search, sortObj, offset, limit, function(err, ret_data){
-		if(!err)
-		{
+	Users.findUsers(search, sortObj, offset, limit, function(err, ret_data){
+		if(!err){
 			result.rows = ret_data;
 			
 			Users.findCount(search, function(err, ret_count){
-				if(!err)
-				{
+				if(!err){
 					result.total = ret_count;
 					res.send(result);
-				}
-				else{
-					console.log(err);
+				}else{
 					result.error = error_str;
 					res.send(result);
 				}
 			});
-		}
-		else{
+		}else {
 			console.log(err);
 			result.error = error_str;
 			res.send(result);
@@ -822,12 +810,9 @@ app.get('/getDepartments', function(req, res) {
 	Users.find({
 		Department : name,
 	}, function(err, result){
-		if(!err)
-		{
+		if(!err){
 			res.send(result ? result : []);
-		}
-		else
-		{
+		}else {
 			res.send([]);
 		}
 	});
@@ -847,7 +832,7 @@ app.get('/followToggle', function(req, res) {
 				if(!error && result) {
 					Users.findByIdAndUpdate(uid, {'$pull' : {'Concerns' : fid}}, function(error3, result3) {
 						if(!error3 && result3) {
-							Users.findById(fid, function(error5, result5) {
+							Users.findById(uid, function(error5, result5) {
 								if(!error5 && result5) {
 									res.send({
 										err : 0, 
@@ -874,17 +859,14 @@ app.get('/followToggle', function(req, res) {
 				{
 					Users.findByIdAndUpdate(uid, {'$addToSet' : {'Concerns' : fid}}, function(error4, result4) {
 						if(!error4 && result4) {
-							Users.findById(fid, function(error6, result6) {
-								if(!error6 && result6)
-								{
+							Users.findById(uid, function(error6, result6) {
+								if(!error6 && result6) {
 									res.send({
 										err : 0, 
 										msg : '关注成功',
 										uinfo : result6,
 									});
-								}
-								else
-								{
+								}else {
 									res.send({err : 3, msg : '查询关注后的信息失败'});
 								}
 							});

@@ -40,7 +40,7 @@ export default class AddUser extends Component {
   		this.department = route.department;
 
   		let that = this;
-		let url = Config.host + Config.getUserInfo;
+		let url = Config.host + Config.getBasicInfo;
 
   		Util.fetch(url, 'get', {
   			action : 'add'

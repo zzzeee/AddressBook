@@ -6,6 +6,8 @@ import {
     TouchableHighlight,
     Navigator,
     Animated,
+    AsyncStorage,
+    Linking,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,16 +27,33 @@ export default class About extends Component {
         super(props);
         this.state = {
             showLoad : true,
+            userInfoQuery : null,
             heightValue: new Animated.Value(0),
         };
 
         this.user_id = null;
         this.local_id = null;
+        this.ConcernsList = [];
+        this.FansList = [];
+        this.search_key = null;
+        this.search_val = null;
     }
 
     componentWillMount() {
         this.user_id = this.props.user_id;
         this.local_id = this.props.local_id;
+        
+        let that = this;
+        AsyncStorage.getItem(Config.storageKey, function(err, result){
+            if(!err) {
+                let user = JSON.parse(result) || {};
+                that.FansList = user.Fans || [];
+                that.ConcernsList = user.Concerns || [];
+                that.setState({
+                    userInfoQuery : user,
+                });
+            }
+        });
     }
 
     render() {
@@ -47,6 +66,7 @@ export default class About extends Component {
                 onWillFocus={() => {
                     //GoToPageObj.pre_page = GoToPageObj.now_page;
                     //GoToPageObj.pre_title = GoToPageObj.now_title;
+                    this.state.heightValue.setValue(0);
                 }}
             />
         );
@@ -70,14 +90,14 @@ export default class About extends Component {
                 return <EditUser nav={navigator} route={route} _id={this.local_id} uid={route.uid} />;
                 break;
             case 'users':
+                route.search = this.search_val ? this.search_val : route.search;
                 return <UserList
                     route={route}
                     nav={navigator}
                     appColor={Config.appColor}
-                    obj={{
-                        search: JSON.stringify(route.search),
-                        sort: 'UserName',
-                        order: 'ASC',
+                    queryList={{
+                        id: this.local_id,
+                        key: this.search_key,
                     }}
                     return={() => {
                         this.user_id = this.local_id;
@@ -93,7 +113,7 @@ export default class About extends Component {
                             title: route.nextTitle,
                             returnId: 'users',
                             returnTitle: route.title,
-                            search: route.search,
+                            search : route.search,
                         });
                     }}
                 />;
@@ -105,26 +125,77 @@ export default class About extends Component {
 
     //初始化
     initPage = (route, navigator) => {
+        let userinfo = this.state.userInfoQuery || null;
         let return_pre = (GoToPageObj.hasOwnProperty('pre_index') && GoToPageObj.pre_page) ? true : false;
         let isreturn = route.returnId || return_pre ? true : false;
         let title = route.title ? route.title : this.props.title;
         const {onScroll = () => {}} = this.props;
         let hideMenu = (this.local_id == this.user_id ?
             <Animated.View style={[styles.hideMenuView, {height: this.state.heightValue}]}>
-                <View style={styles.hideMenuRow}>
-                    <Text style={styles.hideMenuText}>关注列表</Text>
-                </View>
-                <View style={styles.hideMenuRow}>
-                    <Text style={styles.hideMenuText}>粉丝列表</Text>
-                </View>
+                <Button 
+                    text='关注列表'
+                    style={styles.hideMenuRow} 
+                    textStyle={styles.hideMenuText}
+                    onPress={() => {
+                        this.search_key = 'Concerns';
+                        navigator.push({
+                            id : 'users',
+                            title : '关注列表',
+                            returnId : 'main',
+                            returnTitle : '个人中心',
+                            nextTitle : '查看该关注者信息',
+                        });
+                    }}
+                    />
+                <Button 
+                    text='粉丝列表'
+                    style={styles.hideMenuRow2} 
+                    textStyle={styles.hideMenuText}
+                    onPress={() => {
+                        this.search_key = 'Fans';
+                        navigator.push({
+                            id : 'users',
+                            title : '粉丝列表',
+                            returnId : 'main',
+                            returnTitle : '个人中心',
+                            nextTitle : '查看该粉丝信息',
+                        });
+                    }}
+                />
+                <Button 
+                    text='修改资料'
+                    style={styles.hideMenuRow2} 
+                    textStyle={styles.hideMenuText}
+                    onPress={() => {
+                        navigator.push({
+                            id : 'editUser',
+                            title : '修改资料',
+                            uid : this.local_id,
+                            returnId: 'main',
+                            returnTitle: '个人中心',
+                        });
+                    }}
+                />
             </Animated.View> :
             <Animated.View style={[styles.hideMenuView, {height: this.state.heightValue}]}>
-                <View style={styles.hideMenuRow}>
-                    <Text style={styles.hideMenuText}>打电话</Text>
-                </View>
-                <View style={styles.hideMenuRow}>
-                    <Text style={styles.hideMenuText}>发邮件</Text>
-                </View>
+                <Button text="打电话" style={styles.hideMenuRow} textStyle={styles.hideMenuText} onPress={()=>{
+                    Linking.openURL('tel: ' + userinfo.Mobile).catch(err => console.error('Tel error!', err));
+                }} />
+                <Button text="发邮件" style={styles.hideMenuRow2} textStyle={styles.hideMenuText} onPress={()=>{
+                    Linking.openURL('mailto: ' + userinfo.Email).catch(err => console.error('Mailto error!', err));
+                }} />
+                <Button 
+                    text='查看自己'
+                    style={styles.hideMenuRow2} 
+                    textStyle={styles.hideMenuText}
+                    onPress={() => {
+                        this.user_id = this.local_id;
+                        navigator.push({
+                            id: 'main',
+                            title: '个人中心',
+                        });
+                    }}
+                />
             </Animated.View>
         );
         
@@ -138,11 +209,11 @@ export default class About extends Component {
                         <Icon.Button 
                             name={'ellipsis-v'} 
                             size={18} 
-                            iconStyle={{margin: 5}} 
+                            iconStyle={{marginRight: 10}}
                             onPress={()=>{
                                 Animated.timing(this.state.heightValue, {
-                                    toValue: this.state.heightValue._value ? 0 : 80,
-                                    delay: 260,
+                                    toValue: this.state.heightValue._value ? 0 : 150,
+                                    duration: 240,
                                 }).start();
                             }}  
                             color='#fff' 
@@ -177,12 +248,26 @@ export default class About extends Component {
                         local_id={this.local_id} 
                         nav={navigator} 
                         route={route} 
-                        appColor={Config.appColor} 
+                        appColor={Config.appColor}
+                        referenData={this.referenList}
                     />
                 </View>
                 {hideMenu}
             </View>
         );
+    };
+
+    //刷新员工的关注列表和粉丝列表
+    referenList = (clist, flist) => {
+        this.FansList = flist || [];
+        this.ConcernsList = clist || [];
+        
+        if(this.search_key == 'FansList') {
+            this.search_val = this.FansList;
+        } 
+        else if (this.search_key == 'ConcernsList'){
+            this.search_val = this.ConcernsList;
+        }
     };
 }
 
@@ -215,8 +300,15 @@ const styles = StyleSheet.create({
     hideMenuRow : {
         height: 40,
         justifyContent: 'center',
-        paddingLeft : 20,
-        paddingRight: 20,
+        margin: 0,
+        marginTop: 10,
+        backgroundColor: 'transparent',
+    },
+    hideMenuRow2 : {
+        height: 40,
+        margin: 0,
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
     },
     hideMenuText: {
         color: '#fff',

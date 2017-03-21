@@ -7,7 +7,7 @@ import {
     Alert,
     ListView,
     Image,
-    Linking,
+    AsyncStorage,
 } from 'react-native';
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -24,6 +24,7 @@ export default class MainPage extends Component {
         this.state = {
             datas: null,
             showLoad : true,
+            isFollow : null,
             userInfoQuery: null,
             dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 }),
         };
@@ -59,9 +60,19 @@ export default class MainPage extends Component {
                 if(result) {
                     let uinfo = result.uinfo || null;
                     let notices = result.notices || [];
+                    
                     if(uinfo && uinfo._id) {
+                        let _isFollow = false;      
+                        for(let u of uinfo.Fans) {
+                            if(u == that.local_id) {
+                                _isFollow = true;
+                                break;
+                            }
+                        }
+
                         that.setState({
                             datas: notices,
+                            isFollow: _isFollow,
                             userInfoQuery: uinfo,
                             dataSource: that.state.dataSource.cloneWithRows(notices)
                         });
@@ -75,9 +86,8 @@ export default class MainPage extends Component {
         let userinfo = this.state.userInfoQuery || null;
         if(!this.local_id || !this.user_id || !userinfo) return null;
 
-        const {onScroll = () => {}} = this.props;
+        const {onScroll=()=>{}} = this.props;
         let isSelf = this.user_id == this.local_id ? true : false;
-        let isFollow = this.isFollow();
         let img = userinfo.HeadImg ? {uri: Config.host + '/images/' + userinfo.HeadImg} : require('../../images/head.jpeg');
         let userNameText = (
             <Text style={styles.nameText}>
@@ -94,6 +104,7 @@ export default class MainPage extends Component {
                 </View>
             </TouchableHighlight>
         );
+        
         return (
             <ListView
                 ref="ListViews"
@@ -128,7 +139,7 @@ export default class MainPage extends Component {
                                             size={20}
                                             iconStyle={{marginRight: 0}} 
                                             backgroundColor='transparent'
-                                            color={isFollow ? '#D2D251' : '#999'} 
+                                            color={this.state.isFollow ? '#D2D251' : '#999'} 
                                          />
                                     }
                                 </View>
@@ -166,18 +177,6 @@ export default class MainPage extends Component {
         );
     };
 
-    //判断是否关注
-    isFollow = () => {
-        let _isFollow = false;      
-        for(let u of this.state.userInfoQuery.Fans) {
-            if(u == this.local_id) {
-                _isFollow = true;
-                break;
-            }
-        }
-        return _isFollow;
-    };
-
     //更新关注 已关注->取消， 未关注->关注
     followToggle = () => {
         let _uid = this.local_id || null;
@@ -188,29 +187,33 @@ export default class MainPage extends Component {
         if(_fid && _uid && _fid != _uid && this.btnisOK) {
             let that = this;
             let url = Config.host + Config.followToggle;
-           
+            let followState = that.state.isFollow ? 1 : 0;
             Util.fetch(url, 'get', {
-                isFollow : this.isFollow() ? 1 : 0,
+                isFollow : followState,
                 uid : _uid,
                 fid : _fid,
             }, function(result){
                 if(result && result.msg) {
-                    //alert(result.msg);
-                    // Add a Toast on screen.
                     let toast = Toast.show(result.msg, {
-                        duration: 3000,
+                        duration: 2500,
                         position: Toast.positions.CENTER,
                         hideOnPress: true,
                     });
                     
                     that.btnisOK = false;
-                    that.timer = setTimeout(() => { 
+                    that.timer = setTimeout(() => {
                         that.btnisOK = true;
-                    }, 3000);
+                    }, 2500);
 
                     if(result && result.uinfo && result.err === 0) {
                         that.setState({
-                            userInfoQuery : result.uinfo
+                            isFollow : !followState
+                        }, ()=> {
+                            AsyncStorage.setItem(Config.storageKey, JSON.stringify(result.uinfo), function(err){
+                                if(!err) {
+                                    that.props.referenData(result.uinfo.Concerns, result.uinfo.Fans);
+                                }
+                            });
                         });
                     }
                 }

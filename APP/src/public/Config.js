@@ -6,7 +6,8 @@ var Config = {
 	getDep: '/getDepartments',				//获取单个部门的所有员工
 	notices: '/getNotices',					//获取所有公告
 	changePwd: '/changeUserPwd',			//修改用户密码
-	getUserInfo: '/getBasicInfo',			//获取员工的基本信息
+	getBasicInfo: '/getBasicInfo',			//获取员工的基本信息
+	getUserInfo: '/getUserInfo',			//获取员工信息
 	saveUser: '/saveUserInfo',				//添加，编辑用户
 	addNotice: '/addNotice',				//添加公告
 	followToggle: '/followToggle',			//添加关注或取消关注
@@ -16,6 +17,7 @@ var Config = {
 	/* -------------全局样式-start---------- */
 	//本地存储标记字符
 	storageKey: 'AppUser',
+	colorKey: 'appColor',
 	//主色调
 	appColor : '#3590D9',
 	/* -------------全局样式--end----------- */

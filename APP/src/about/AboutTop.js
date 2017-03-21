@@ -47,13 +47,12 @@ export default class AboutTop extends Component {
         if(uid) {
             let url = Config.host + Config.getUserInfo;
             Util.fetch(url, 'get', {
-                action : 'edit',
                 uid : uid,
             }, function(result){
                 if(result) {
-                    if(result.uinfo){
+                    if(result){
                         that.setState({
-                            userInfoQuery : result.uinfo,
+                            userInfoQuery : result,
                             userInfoLocal : that.props.userinfo,
                         });
                     }else {

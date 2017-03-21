@@ -67,7 +67,7 @@ export default class EditUser extends Component {
 		let _id = that.props._id;
 		if(_id && this.props.uid)
 		{
-			let url = Config.host + Config.getUserInfo;
+			let url = Config.host + Config.getBasicInfo;
 			Util.fetch(url, 'get', {
 				action : 'edit',
 				uid : that.props.uid,

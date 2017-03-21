@@ -81,14 +81,17 @@ export default class APP extends Component {
         AsyncStorage.getItem(Config.storageKey, function(err, result){
             if(!err)
             {
-                let user = JSON.parse(result) || {};
-                if(user && user.appColor) {
-                    Config.appColor = user.appColor;
-                }
-                //如果已登录，去除登录页面
-                that.setState({
-                    showLogin : result ? false : true,
-                    userInfo : user,
+                AsyncStorage.getItem(Config.colorKey, function(err2, result2){
+                    if(!err2) {
+                        let user = JSON.parse(result) || {};
+                        if(result2) Config.appColor = result2;
+
+                        //如果已登录，去除登录页面
+                        that.setState({
+                            showLogin : result ? false : true,
+                            userInfo : user,
+                        });
+                    }
                 });
             }
         });
@@ -102,7 +105,7 @@ export default class APP extends Component {
     }
 
     render() {
-        if(!this.state.userInfo || !this.state.userInfo._id) return null;
+        if(!this.state.userInfo) return null;
 
         return (
             <View style={styles.flex}>
