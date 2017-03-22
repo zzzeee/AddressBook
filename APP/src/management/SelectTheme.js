@@ -106,7 +106,7 @@ export default class SelectTheme extends Component {
                 <ScrollView contentContainerStyle={styles.menuBox}>
                     {this.themes.map((obj, i) => this.renderItem(obj, i))}
                 </ScrollView>
-                <LoadAnimated modalVisible={this.state.modalVisible} />
+                <LoadAnimated text='正在更衣' appColor={Config.appColor} modalVisible={this.state.modalVisible} />
             </View>
   		);
 	}
@@ -120,7 +120,7 @@ export default class SelectTheme extends Component {
                     if(this.userInfo && typeof(this.userInfo) == 'object') {
                         let that = this;
                         let time = new Date().getTime();
-                        let t = 1000; // 1秒
+                        let t = 1200; // 1秒
                         this.setState({
                             modalVisible : true
                         }, () => {

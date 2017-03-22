@@ -9,9 +9,11 @@ import {
     Text,
     View,
     Modal,
+    ActivityIndicator
 } from 'react-native';
 
 var Util = require('../public/Util');
+var Config = require('../public/Config');
 
 export default class LoadAnimated extends React.Component {
     constructor(props) {
@@ -38,32 +40,25 @@ export default class LoadAnimated extends React.Component {
     };
 
     render() {
+        let {text = '正在加载', appColor = Config.appColor} = this.props;
         return (
-        <Modal
-            animationType={"fade"}
-            transparent={true}
-            visible={this.props.modalVisible}
-            onRequestClose={() => {}}
-        >
-            <View style={styles.centerBox}>
-                <View style={styles.modalBody}>
-                    <Text style={styles.modalText}>正在加载</Text>
-                    <Animated.Image 
-                        source={require('../../images/loading.png')}
-                        style={{
-                            width : 26,
-                            height: 26,
-                            transform: [{
-                                rotate: this.state.rotateValue.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: ['0deg', '360deg']
-                                }),
-                            },]
-                        }}
-                    />
+            <Modal
+                animationType={"fade"}
+                transparent={true}
+                visible={this.props.modalVisible}
+                onRequestClose={() => {}}
+            >
+                <View style={styles.centerBox}>
+                    <View style={styles.modalBody}>
+                        <Text style={styles.modalText}>{text}</Text>
+                        <ActivityIndicator
+                            animating={true}
+                            color={'#fff'}
+                            size="small"
+                        />
+                    </View>
                 </View>
-            </View>
-        </Modal>
+            </Modal>
         );
     }
 }
