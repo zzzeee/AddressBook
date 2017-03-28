@@ -17,7 +17,8 @@
     "react-native-root-toast": "^1.0.3",
     "react-native-scrollable-tab-view": "^0.7.2",
     "react-native-uploader": "0.0.10",
-    "react-native-vector-icons": "^4.0.0"
+    "react-native-vector-icons": "^4.0.0",
+    "react-navigation": "^1.0.0-beta.7"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",
