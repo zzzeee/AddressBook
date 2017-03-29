@@ -29,6 +29,7 @@ export default class About extends Component {
             showLoad : true,
             userInfoQuery : null,
             heightValue: new Animated.Value(0),
+            fadeInOpacity: new Animated.Value(0),
         };
 
         this.user_id = null;
@@ -66,7 +67,12 @@ export default class About extends Component {
                 onWillFocus={() => {
                     //GoToPageObj.pre_page = GoToPageObj.now_page;
                     //GoToPageObj.pre_title = GoToPageObj.now_title;
-                    this.state.heightValue.setValue(0);
+                    //this.state.heightValue.setValue(0);
+                    //this.state.fadeInOpacity.setValue(0);
+                    this.setState({
+                        heightValue: new Animated.Value(0),
+                        fadeInOpacity: new Animated.Value(0),
+                    });
                 }}
             />
         );
@@ -131,12 +137,13 @@ export default class About extends Component {
         let title = route.title ? route.title : this.props.title;
         const {onScroll = () => {}} = this.props;
         let hideMenu = (this.local_id == this.user_id ?
-            <Animated.View style={[styles.hideMenuView, {height: this.state.heightValue}]}>
+            <Animated.View style={[styles.hideMenuView, {height: this.state.heightValue, opacity: this.state.fadeInOpacity}]}>
                 <Button 
                     text='关注列表'
                     style={styles.hideMenuRow} 
                     textStyle={styles.hideMenuText}
                     onPress={() => {
+                        if(!this.state.heightValue._value) return false;
                         this.search_key = 'Concerns';
                         navigator.push({
                             id : 'users',
@@ -146,12 +153,13 @@ export default class About extends Component {
                             nextTitle : '查看该关注者信息',
                         });
                     }}
-                    />
+                />
                 <Button 
                     text='粉丝列表'
                     style={styles.hideMenuRow2} 
                     textStyle={styles.hideMenuText}
                     onPress={() => {
+                        if(!this.state.heightValue._value) return false;
                         this.search_key = 'Fans';
                         navigator.push({
                             id : 'users',
@@ -167,6 +175,7 @@ export default class About extends Component {
                     style={styles.hideMenuRow2} 
                     textStyle={styles.hideMenuText}
                     onPress={() => {
+                        if(!this.state.heightValue._value) return false;
                         navigator.push({
                             id : 'editUser',
                             title : '修改资料',
@@ -177,11 +186,14 @@ export default class About extends Component {
                     }}
                 />
             </Animated.View> :
-            <Animated.View style={[styles.hideMenuView, {height: this.state.heightValue}]}>
+            <Animated.View 
+                style={[styles.hideMenuView, { height: this.state.heightValue, opacity: this.state.fadeInOpacity}]}>
                 <Button text="打电话" style={styles.hideMenuRow} textStyle={styles.hideMenuText} onPress={()=>{
+                    if(!this.state.heightValue._value) return false;
                     Linking.openURL('tel: ' + userinfo.Mobile).catch(err => console.error('Tel error!', err));
                 }} />
                 <Button text="发邮件" style={styles.hideMenuRow2} textStyle={styles.hideMenuText} onPress={()=>{
+                    if(!this.state.heightValue._value) return false;
                     Linking.openURL('mailto: ' + userinfo.Email).catch(err => console.error('Mailto error!', err));
                 }} />
                 <Button 
@@ -189,6 +201,7 @@ export default class About extends Component {
                     style={styles.hideMenuRow2} 
                     textStyle={styles.hideMenuText}
                     onPress={() => {
+                        if(!this.state.heightValue._value) return false;
                         this.user_id = this.local_id;
                         navigator.push({
                             id: 'main',
@@ -201,47 +214,55 @@ export default class About extends Component {
         
         return (
             <View style={styles.flex}>
-                <TopTitle 
-                    title={title} 
-                    appColor={Config.appColor} 
-                    showReturn={isreturn}
-                    sideRight={
-                        <Icon.Button 
-                            name={'ellipsis-v'} 
-                            size={18} 
-                            iconStyle={{marginRight: 10}}
-                            onPress={()=>{
-                                Animated.timing(this.state.heightValue, {
-                                    toValue: this.state.heightValue._value ? 0 : 150,
-                                    duration: 240,
-                                }).start();
-                            }}  
-                            color='#fff' 
-                            backgroundColor='transparent' 
-                        />
-                    }
-                    onPress={() => {
-                        if (route.returnId) {
-                            navigator.push({
-                                id: route.returnId,
-                                title: route.returnTitle,
-                                returnId: 'main',
-                                returnTitle: '个人中心',
-                                nextTitle: route.title,
-                                search: route.search,
-                            });
+                <View style={{height: 60, zIndex: 9}}>
+                    <TopTitle 
+                        title={title} 
+                        appColor={Config.appColor} 
+                        showReturn={isreturn}
+                        sideRight={
+                            <Icon.Button 
+                                name={'ellipsis-v'} 
+                                size={18} 
+                                iconStyle={{marginRight: 10}}
+                                onPress={()=>{
+                                    Animated.parallel([
+                                        Animated.timing(this.state.fadeInOpacity, {
+                                            toValue: this.state.fadeInOpacity._value ? 0 : 1,
+                                            duration: 50,
+                                        }),
+                                        Animated.timing(this.state.heightValue, {
+                                            toValue: this.state.heightValue._value ? 0 : 150,
+                                            duration: 240,
+                                        }),
+                                    ]).start();
+                                }}  
+                                color='#fff' 
+                                backgroundColor='transparent' 
+                            />
                         }
-                        else if (return_pre) {
-                            //alert(JSON.stringify(GoToPageObj));
-                            GoToPageObj.page = GoToPageObj.pre_page;
-                            GoToPageObj.title = GoToPageObj.pre_title;
-                            GoToPageObj.index = GoToPageObj.pre_index;
-                            GoToPageObj.clear_pre = true;
+                        onPress={() => {
+                            if (route.returnId) {
+                                navigator.push({
+                                    id: route.returnId,
+                                    title: route.returnTitle,
+                                    returnId: 'main',
+                                    returnTitle: '个人中心',
+                                    nextTitle: route.title,
+                                    search: route.search,
+                                });
+                            }
+                            else if (return_pre) {
+                                //alert(JSON.stringify(GoToPageObj));
+                                GoToPageObj.page = GoToPageObj.pre_page;
+                                GoToPageObj.title = GoToPageObj.pre_title;
+                                GoToPageObj.index = GoToPageObj.pre_index;
+                                GoToPageObj.clear_pre = true;
 
-                            GoToPage();
-                        }
-                    }}
-                />
+                                GoToPage();
+                            }
+                        }}
+                    />
+                </View>
                 <View style={styles.flex}>
                     <MainPage 
                         user_id={this.user_id} 
@@ -296,6 +317,7 @@ const styles = StyleSheet.create({
         right: 10,
         top: 50,
         borderRadius: 10,
+        zIndex: 99,
     },
     hideMenuRow : {
         height: 40,

@@ -398,7 +398,7 @@ export default class EditUser extends Component {
 			else if(response.type != 'image/jpeg' && response.type != 'image/png' && response.type != 'image/gif' && response.type != 'image/bmp')
 			{
 				//alert('你上传的图片类型不对');
-				this.toast = Toast.show('你上传的图片类型不可用', {
+				this.toast = Toast.show('你上传的图片类型(' + response.type + ')不可用', {
 					duration: Toast.durations.LONG,
 					position: Toast.positions.CENTER,
 					hideOnPress: true,

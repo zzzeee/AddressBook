@@ -35,7 +35,7 @@ export default class TopTitle extends Component {
 	    		<View style={styles.middleBox}>
 	    			<Text style={styles.title}>{title}</Text>
 	    		</View>
-	    		<View style={[styles.sideBox, {paddingBottom: 6}]}>
+	    		<View style={styles.sideBox}>
 					{sideRight ? sideRight : null}
 	    		</View>
 			</View>
