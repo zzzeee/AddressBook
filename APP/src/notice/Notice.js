@@ -14,6 +14,7 @@ import {
 import TopTitle from '../public/TopTitle';
 import InputText from '../public/InputText';
 import NoticeDetails from './NoticeDetails';
+import SwiperBtns from '../public/SwiperBtns';
 
 var Util = require('../public/Util');
 var Config = require('../public/Config');
@@ -114,7 +115,7 @@ export default class About extends Component {
 					{this.state.datas === null ? null : (this.state.datas.length ? 
 						<ListView 
 					        dataSource={this.state.dataSource} 
-					        renderRow={this.renderNotice.bind(this)}
+					        renderRow={this.renderNotice2.bind(this)}
 					        enableEmptySections={true}	//允许空数据
 							refreshControl={this._refreshControl()}
 							onScroll={this._onScroll.bind(this)}
@@ -137,6 +138,40 @@ export default class About extends Component {
 					)}
 				</View>
 			</View>
+		);
+	};
+
+	renderNotice2 = (obj, sectionID, rowID) => {
+		let _btns = [{
+			'text': '分享',
+			'press': ()=>{alert(obj.Author + '分享')},
+		}, {
+			'text': '删除',
+			'press': ()=>{alert(obj.Author + '删除')},
+		}];
+		return (
+			<SwiperBtns btns={_btns}>
+				<View key={rowID} style={styles.oneNotice}>
+					<View style={[styles.userFristView, {backgroundColor: this.props.appColor}]}>
+						<Text style={styles.userFristText}>{obj.Department.substring(0, 1)}</Text>
+					</View>
+					<View style={styles.contentBox}>
+						<View style={styles.contentView}>
+							<Text style={styles.contentTxt} numberOfLines={2}>{obj.Content}</Text>
+						</View>
+						<View style={styles.NameTimeBox}>
+							<Text style={styles.smallText}>{obj.Author}</Text>
+							<Text style={styles.smallText}>{Util.getFormatDate(obj.AddTime, 1)}</Text>
+						</View>
+					</View>
+					{obj.Type ?
+						<View style={styles.noticeTypeBox}>
+							<Text style={styles.noticeType}>紧急</Text>
+						</View>
+						: null
+					}
+				</View>
+			</SwiperBtns>
 		);
 	};
 
@@ -274,6 +309,7 @@ const styles = StyleSheet.create({
 	oneNotice : {
 		flexDirection : 'row',
 		height : 80,
+		width: Util.size.width-160,
 		alignItems: 'center',
 		paddingLeft : 20,
 		paddingRight: 20,
