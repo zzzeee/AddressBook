@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
 	oneNotice : {
 		flexDirection : 'row',
 		height : 80,
-		width: Util.size.width-160,
+		width: Util.size.width,
 		alignItems: 'center',
 		paddingLeft : 20,
 		paddingRight: 20,

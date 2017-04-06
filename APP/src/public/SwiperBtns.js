@@ -59,7 +59,7 @@ export default class SwiperBtns extends Component {
 
     // 组件加载完成
     componentDidMount() {
-        this.autoLoop();
+        //this.autoLoop();
     }
 
     // 卸载组件
@@ -175,10 +175,20 @@ export default class SwiperBtns extends Component {
             <View style={styles.container} {...this.panResponderInit.panHandlers}>
                 <Animated.View style={[styles.item, {transform: [{translateX: this.position}]}]}>
                     {children}
-                    {btns.map((btn, i) => {
-                        return <Text key={i} style={styles.btnText} onPress={()=>btn.press()}>{btn.text}</Text>;
-                    })}
                 </Animated.View>
+                <View style={styles.btnsView}>
+                    {btns.map((btn, i) => {
+                        return (
+                            <TouchableOpacity
+                                key={i}
+                                style={styles.btnsTouch} 
+                                onPress={(evt)=>{console.log((evt.nativeEvent))}}
+                            >
+                                <Text style={styles.btnText}>{btn.text}</Text>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </View>
             </View>
         );
     }
@@ -190,22 +200,30 @@ const styles = StyleSheet.create({
     },
     container: {
         height: 80,
-        width: 350,
         backgroundColor : '#bbb',
     },
     item: {
-        height: 80,
-        width: 350,
-        backgroundColor: '#4ca7b3',
         flexDirection: 'row',
+		alignItems: 'center',
         position: 'absolute',
         left: 0,
+        zIndex: 9,
+    },
+    btnsView: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+		alignItems: 'center',
+    },
+    btnsTouch : {
+        height: 80,
+        backgroundColor: 'red',
+        justifyContent: 'center',
+		alignItems: 'center',
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     btnText: {
-        backgroundColor: 'red',
-        flex: 1,
-        padding: 20,
-        margin: 5,
+        fontSize: 14,
         color: '#fff',
     },
 });
