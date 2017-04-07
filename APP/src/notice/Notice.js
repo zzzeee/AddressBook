@@ -144,13 +144,34 @@ export default class About extends Component {
 	renderNotice2 = (obj, sectionID, rowID) => {
 		let _btns = [{
 			'text': '分享',
-			'press': ()=>{alert(obj.Author + '分享')},
+			'press': ()=>{alert('分享个屁')},
+			backgroundColor: 'orange',
 		}, {
 			'text': '删除',
-			'press': ()=>{alert(obj.Author + '删除')},
+			'press': ()=>{alert('删除不了')},
+			backgroundColor: 'red'
 		}];
+		let btnConfig = {
+			itemHeight: 80,
+			friction: 2,        //摩擦力
+			tension: 40,        //张力
+			direction: 'right', //默认方向 (顺时针)
+		};
 		return (
-			<SwiperBtns btns={_btns}>
+			<SwiperBtns btns={_btns} {...btnConfig}>
+				<TouchableHighlight 
+					key={rowID}
+					underlayColor='transparent'
+					onPress={()=> {
+						this._navigator.push({
+							title: '公告详情', 
+							id:'noticeView',
+							notice: obj,
+							returnId: 'main',
+							returnTitle: this.props.title,
+						});
+					}}
+				>
 				<View key={rowID} style={styles.oneNotice}>
 					<View style={[styles.userFristView, {backgroundColor: this.props.appColor}]}>
 						<Text style={styles.userFristText}>{obj.Department.substring(0, 1)}</Text>
@@ -171,6 +192,7 @@ export default class About extends Component {
 						: null
 					}
 				</View>
+				</TouchableHighlight>
 			</SwiperBtns>
 		);
 	};
