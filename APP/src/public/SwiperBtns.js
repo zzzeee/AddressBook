@@ -34,8 +34,8 @@ export default class SwiperBtns extends Component {
     // 构造函数
     constructor(props) {
         super(props);
-
-        this.minOffset = 10;
+        this.isOpen = false;
+        this.minOffset = 0;
         this.textWidth = 0;
         this.positionValue = 0;
         this.position = new Animated.Value(0);
@@ -65,10 +65,19 @@ export default class SwiperBtns extends Component {
             let max = this.textWidth + this.minOffset;
             if(this.textWidth > 0) {
                 if(this.props.direction === 'left') {
+                    if(this.isOpen) {
+                        max = 0;
+                        min = this.textWidth;
+                    }
                     if(dx > max) left = max;
                     if(dx < -min) left = -min;
                     this.position.setValue(left);
                 }else {
+                    if(this.isOpen) {
+                        max = 0;
+                        min = this.textWidth;
+                    }
+                    if(this.isOpen) max = 0;
                     if(dx > min) left = min;
                     if(dx < -max) left = -max;
                     this.position.setValue(left);
@@ -87,27 +96,33 @@ export default class SwiperBtns extends Component {
             if(this.props.direction === 'left') {
                 if(vx > 0.05) {
                     result = this.textWidth;
-                }
-                else if(vx < -0.05) {
+                    this.isOpen = true;
+                }else if(vx < -0.05) {
                     result = 0;
+                    this.isOpen = false;
                 }else {
                     if(this.positionValue >= half) {
                         result = this.textWidth;
+                        this.isOpen = true;
                     }else {
                         result = 0;
+                        this.isOpen = false;
                     }
                 }
             }else {
                 if(vx > 0.05) {
                     result = 0;
-                }
-                else if(vx < -0.05) {
+                    this.isOpen = false;
+                }else if(vx < -0.05) {
                     result = -this.textWidth;
+                    this.isOpen = true;
                 }else {
                     if(this.positionValue > -half) {
                         result = 0;
+                        this.isOpen = false;
                     }else {
                         result = -this.textWidth;
+                        this.isOpen = true;
                     }
                 }
             }
@@ -127,33 +142,37 @@ export default class SwiperBtns extends Component {
 
     // 基本函数
     render() {
-        const { textStyle, itemHeight, children, btns } = this.props;
+        const { itemHeight, children, btns } = this.props;
         let btnText = btns.map((btn, i) => {
-            let bgColor = btn.backgroundColor || null;
-            if(!bgColor || (typeof(bgColor) != 'string')) {
-                let randColor = parseInt(Math.random() * 1000);
-                bgColor = randColor > 100 ? ('#' + randColor) : ('#' + (randColor + 100));
-            }
+            let size = btn.fontSize || 14;
+            let color = btn.color || '#fff';
+            let bgColor = btn.backgroundColor || '#ccc';
             return (
                 <TouchableOpacity
                     key={i}
-                    style={[styles.btnsTouch, {height: itemHeight, backgroundColor: bgColor}]}
+                    style={[styles.btnsTouch, {
+                        height: itemHeight,
+                        backgroundColor: bgColor,
+                    }]}
                     onPress={btn.press}
                     onLayout={(evt)=>{
                         this.textWidth += evt.nativeEvent.layout.width;
                     }}
                 >
-                    <Text style={[styles.btnText, textStyle]}>{btn.text}</Text>
+                    <Text style={{color: color, fontSize: size, }}>{btn.text}</Text>
                 </TouchableOpacity>
             );
         });
         let direction = this.props.direction === 'left' ? 'flex-start' : 'flex-end';
         return (
-            <View style={styles.container} {...this.panResponderInit.panHandlers}>
+            <View style={styles.container}>
                 <View style={[styles.btnsView, {justifyContent: direction}]}>
                     {btnText}
                 </View>
-                <Animated.View style={[styles.item, {height: itemHeight, transform: [{translateX: this.position}]}]}>
+                <Animated.View
+                    {...this.panResponderInit.panHandlers}
+                    style={[styles.item, {height: itemHeight, transform: [{translateX: this.position}]}]}
+                >
                     {children}
                 </Animated.View>
             </View>
@@ -185,9 +204,5 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
         paddingLeft: 20,
         paddingRight: 20,
-    },
-    btnText: {
-        fontSize: 14,
-        color: '#fff',
     },
 });
